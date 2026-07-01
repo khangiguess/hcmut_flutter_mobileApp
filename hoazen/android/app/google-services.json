@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "486391599000",
+    "project_id": "hoazen-hcmut",
+    "storage_bucket": "hoazen-hcmut.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486391599000:android:5e0ca548e247b49c0b65ed",
+        "android_client_info": {
+          "package_name": "com.example.hoazen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpl2sOQYbas12yfFTmg45K5P2Ziu0y-xg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
