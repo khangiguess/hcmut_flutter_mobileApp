@@ -7,8 +7,7 @@ class WaitScreen extends StatelessWidget {
   static const _endGradient = Color(0xFF42624B);
   static const _spotColor = Color(0xFFF4E8B1);
   static const _logoStrokeColor = Color(0xFFFFACA9);
-  static const _logoImageUrl =
-      'https://www.figma.com/api/mcp/asset/3a8a0da1-809e-4ec0-826d-837bd2934bef';
+  static const iconImage = 'assets/images/hoazen.png';
 
   @override
   Widget build(BuildContext context) {
@@ -48,19 +47,9 @@ class WaitScreen extends StatelessWidget {
                         aspectRatio: 1,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Image.network(
-                            _logoImageUrl,
+                          child: Image.asset(
+                            iconImage,
                             fit: BoxFit.contain,
-                            loadingBuilder: (context, child, progress) {
-                              if (progress == null) {
-                                return child;
-                              }
-                              return const Center(
-                                child: CircularProgressIndicator(
-                                  color: _logoStrokeColor,
-                                ),
-                              );
-                            },
                             errorBuilder: (context, error, stackTrace) {
                               return Icon(
                                 Icons.spa_outlined,
