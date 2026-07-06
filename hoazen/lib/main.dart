@@ -19,7 +19,7 @@ class HoaZenApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
+      
       title: 'HoaZen',
       debugShowCheckedModeBanner: false,
       home: BottomNavigationBarExample()
@@ -84,7 +84,7 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
           selectedItemColor: const Color(0xFFFFF2B2),
           unselectedItemColor: const Color(0xFFBBC293),
           onTap: _onItemTapped,
-
+          
           showSelectedLabels: false,
           showUnselectedLabels: false,
           selectedFontSize: 0,
