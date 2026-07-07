@@ -4,6 +4,7 @@ import '../../shared/checkin_common.dart';
 import 'quiz.dart';
 import '../journal/calendar.dart';
 
+// Global index variable to keep track of the animation frame state
 int _savedGlobalFrameIndex = 0;
 
 class ImageAnimationWidget extends StatefulWidget {
@@ -15,17 +16,17 @@ class ImageAnimationWidget extends StatefulWidget {
 
 class _ImageAnimationWidgetState extends State<ImageAnimationWidget> {
   final List<String> _frames = [
-    'images/flower1.png',
-    'images/flower2.png',
-    'images/flower3.png',
-    'images/flower4.png',
-    'images/flower5.png',
-    'images/flower6.png',
-    'images/flower7.png',
-    'images/flower8.png',
-    'images/flower9.png',
-    'images/flower10.png',
-    'images/flower11.png',
+    'assets/photo/flower1.png',
+    'assets/photo/flower2.png',
+    'assets/photo/flower3.png',
+    'assets/photo/flower4.png',
+    'assets/photo/flower5.png',
+    'assets/photo/flower6.png',
+    'assets/photo/flower7.png',
+    'assets/photo/flower8.png',
+    'assets/photo/flower9.png',
+    'assets/photo/flower10.png',
+    'assets/photo/flower11.png',
   ];
 
   late int _currentFrameIndex;
@@ -81,6 +82,8 @@ class _ImageAnimationWidgetState extends State<ImageAnimationWidget> {
 class FlowerPage extends StatelessWidget {
   const FlowerPage({super.key});
 
+  /// Opens the Daily Check In stream. If the user clicks "View Journal"
+  /// on the completion screen, open the calendar page directory.
   Future<void> _startCheckIn(BuildContext context) async {
     final result = await Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (_) => const CheckInFlowScreen()),
@@ -107,7 +110,7 @@ class FlowerPage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
       child: Column(
         children: [
-          // --- REAL FLOWER ANIMATION REPLACES PLACEHOLDER ---
+          // 1. Interactive Animated Flower Widget (Replaced the generic placeholder box)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20.0),
             child: Center(
@@ -115,9 +118,9 @@ class FlowerPage extends StatelessWidget {
             ),
           ),
           
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
 
-          // (Phần của Khôi) Card DAILY CHECK IN — khung hồng/mint dẫn vào luồng check-in
+          // 2. Daily Check-In Card Flow Element
           DailyCheckInCard(onCheckIn: () => _startCheckIn(context)),
         ],
       ),

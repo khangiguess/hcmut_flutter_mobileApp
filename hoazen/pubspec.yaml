@@ -61,6 +61,17 @@ flutter:
 
   assets:
     - assets/
+    - assets/photo/flower1.png
+    - assets/photo/flower2.png
+    - assets/photo/flower3.png
+    - assets/photo/flower4.png
+    - assets/photo/flower5.png
+    - assets/photo/flower6.png
+    - assets/photo/flower7.png
+    - assets/photo/flower8.png
+    - assets/photo/flower9.png
+    - assets/photo/flower10.png
+    - assets/photo/flower11.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
