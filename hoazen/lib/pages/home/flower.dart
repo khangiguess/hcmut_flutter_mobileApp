@@ -8,6 +8,8 @@ class FlowerPage extends StatelessWidget {
 
   /// (Phần của Khôi) Mở luồng Daily Check In; nếu người dùng bấm
   /// "View Journal" ở màn Completed thì mở tiếp trang lịch.
+  
+  
   Future<void> _startCheckIn(BuildContext context) async {
     final result = await Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (_) => const CheckInFlowScreen()),
