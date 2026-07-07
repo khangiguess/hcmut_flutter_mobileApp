@@ -54,26 +54,12 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       
       appBar: AppBar(
-        toolbarHeight: 110, // Increased height to give the "Hello, Jess" text and dots room to breathe
-        title: const Padding(
-          padding: EdgeInsets.only(top: 70.0, left: 5.0),
-          child: Positioned(
-            child: Text(
-            'Hello, Jess', 
-            style: TextStyle(
-              color: Color.fromARGB(255, 255, 255, 255),
-              fontSize: 28,
-              fontFamily: 'Serif',
-           // Matches your custom layout style
-              ),
-            ),
-          )
-          
-        ),
+        toolbarHeight: 140, // Height increased to give spacing for text and dots
+        automaticallyImplyLeading: false, // Prevents accidental back arrows
         flexibleSpace: ClipRect(
           child: Stack(
             children: [
-              // Background Gradient Layer
+              // 1. Background Gradient Layer
               Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -84,7 +70,21 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 ),
               ),
               
-              // --- SCATTERED BUBBLES/DOTS MAP ---
+              // 2. Greeting Text (Safely inside the Stack for custom positioning)
+              const Positioned(
+                bottom: 20, // Lowers the text closer to the white body card
+                left: 20,   // Side margins
+                child: Text(
+                  'Hello, Jess', 
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontSize: 28,
+                    fontFamily: 'Serif',
+                  ),
+                ),
+              ),
+              
+              // 3. --- SCATTERED BUBBLES/DOTS MAP ---
               
               // Top Left small dot
               Positioned(
@@ -215,8 +215,6 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
           ],
         ),
       ),
-
-
     );
   }
 }

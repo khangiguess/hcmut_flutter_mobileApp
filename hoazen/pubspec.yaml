@@ -35,6 +35,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   firebase_core: ^4.11.0
+  flutter_svg: ^2.0.10
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +58,20 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/photo/flower1.png
+    - assets/photo/flower2.png
+    - assets/photo/flower3.png
+    - assets/photo/flower4.png
+    - assets/photo/flower5.png
+    - assets/photo/flower6.png
+    - assets/photo/flower7.png
+    - assets/photo/flower8.png
+    - assets/photo/flower9.png
+    - assets/photo/flower10.png
+    - assets/photo/flower11.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

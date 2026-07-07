@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../shared/checkin_common.dart';
+import 'quiz.dart';
+import '../journal/calendar.dart';
 
+// Global index variable to keep track of the animation frame state
 int _savedGlobalFrameIndex = 0;
 
 class ImageAnimationWidget extends StatefulWidget {
@@ -12,17 +16,17 @@ class ImageAnimationWidget extends StatefulWidget {
 
 class _ImageAnimationWidgetState extends State<ImageAnimationWidget> {
   final List<String> _frames = [
-    'images/flower1.png',
-    'images/flower2.png',
-    'images/flower3.png',
-    'images/flower4.png',
-    'images/flower5.png',
-    'images/flower6.png',
-    'images/flower7.png',
-    'images/flower8.png',
-    'images/flower9.png',
-    'images/flower10.png',
-    'images/flower11.png',
+    'assets/photo/flower1.png',
+    'assets/photo/flower2.png',
+    'assets/photo/flower3.png',
+    'assets/photo/flower4.png',
+    'assets/photo/flower5.png',
+    'assets/photo/flower6.png',
+    'assets/photo/flower7.png',
+    'assets/photo/flower8.png',
+    'assets/photo/flower9.png',
+    'assets/photo/flower10.png',
+    'assets/photo/flower11.png',
   ];
 
   late int _currentFrameIndex;
@@ -46,7 +50,7 @@ class _ImageAnimationWidgetState extends State<ImageAnimationWidget> {
       setState(() {
         if (_currentFrameIndex < _frames.length - 1) {
           _currentFrameIndex++;
-          _savedGlobalFrameIndex = _currentFrameIndex; // Save the current frame index globally
+          _savedGlobalFrameIndex = _currentFrameIndex; 
         } else {
           _timer?.cancel();
           _isPlaying = false;
@@ -78,18 +82,47 @@ class _ImageAnimationWidgetState extends State<ImageAnimationWidget> {
 class FlowerPage extends StatelessWidget {
   const FlowerPage({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white, // Pure white background match
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 50.0),
-          child: Align(
-            alignment: Alignment.topCenter, // Positions at the top middle
-            child: const ImageAnimationWidget(), // Placed the interactive widget here
+  /// Opens the Daily Check In stream. If the user clicks "View Journal"
+  /// on the completion screen, open the calendar page directory.
+  Future<void> _startCheckIn(BuildContext context) async {
+    final result = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const CheckInFlowScreen()),
+    );
+    if (result == 'journal' && context.mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => Scaffold(
+            appBar: AppBar(
+              title: const Text('Journal'),
+              backgroundColor: ZenColors.headerGreen,
+              foregroundColor: Colors.white,
+            ),
+            body: const calendarPage(),
           ),
         ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
+      child: Column(
+        children: [
+          // 1. Interactive Animated Flower Widget (Replaced the generic placeholder box)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 20.0),
+            child: Center(
+              child: ImageAnimationWidget(),
+            ),
+          ),
+          
+          const SizedBox(height: 24),
+
+          // 2. Daily Check-In Card Flow Element
+          DailyCheckInCard(onCheckIn: () => _startCheckIn(context)),
+        ],
       ),
     );
   }
