@@ -9,8 +9,8 @@ const _borderColor = Color(0xFFEF91A3);
 const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+class TestScreen extends StatelessWidget {
+  const TestScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +40,8 @@ class SignInScreen extends StatelessWidget {
                         child: Image.asset(
                           iconImage,
                           fit: BoxFit.contain,
-                          height: 120, 
-                          width: 160,
+                          height: 200, 
+                          width: 200,
                           errorBuilder: (context, error, stackTrace) {
                             return const Icon(
                               Icons.eco_outlined,
@@ -52,7 +52,6 @@ class SignInScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
 
                       Text(
                         'Sign In',

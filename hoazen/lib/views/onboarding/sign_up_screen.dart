@@ -9,8 +9,8 @@ const _borderColor = Color(0xFFEF91A3);
 const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+class SignUpScreen extends StatelessWidget {
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +52,9 @@ class SignInScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
 
                       Text(
-                        'Sign In',
+                        'Sign Up',
                         style: GoogleFonts.lora(
                           textStyle: Theme.of(context).textTheme.displayLarge,
                           fontSize: 42, 
@@ -75,11 +74,20 @@ class SignInScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 16),
 
-                      // 1. Email input (Faint pink background)
+
                       const _AuthInput(
-                        hintText: 'Enter your email',
+                        hintText: 'Full name',
+                        suffixIcon: Icon(Icons.person_outline, color: _hintColor),
+                        obscureText: false,
+                        backgroundColor: Color(0xFFFCF8F9), 
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      const _AuthInput(
+                        hintText: 'Valid email',
                         suffixIcon: Icon(Icons.email_outlined, color: _hintColor),
                         obscureText: false,
                         backgroundColor: Color(0xFFFCF8F9), 
@@ -87,13 +95,35 @@ class SignInScreen extends StatelessWidget {
 
                       const SizedBox(height: 16),
 
-                      // 2. Password input (Light grey background)
                       const _AuthInput(
-                        hintText: 'Password',
+                        hintText: 'Strong password',
                         suffixIcon: Icon(Icons.visibility_off_outlined, color: _hintColor),
                         obscureText: true,
                         backgroundColor: Color(0xFFF5F5F5), 
                       ),
+
+                      const SizedBox(height: 48),
+
+
+                      //Check box for terms and conditions
+
+                      const Row(children: [
+                        Checkbox(value: true, onChanged: null),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'By checking to the box, you agree to our Terms and Conditions',
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 13,
+                              color: _hintColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                      ),
+
+                      const SizedBox(height: 16),
 
                       const Spacer(), 
 
@@ -123,7 +153,7 @@ class SignInScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Next',
+                                  'Sign Up',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -150,11 +180,11 @@ class SignInScreen extends StatelessWidget {
                           text: const TextSpan(
                             style: TextStyle(fontFamily: 'Poppins', fontSize: 13),
                             children: [
-                              TextSpan(text: 'New member ', style: TextStyle(color: _hintColor)),
+                              TextSpan(text: 'Already a member', style: TextStyle(color: _hintColor)),
                               TextSpan(text: '?', style: TextStyle(color: _hintColor)),
                               TextSpan(text: ' ', style: TextStyle(color: _hintColor)),
                               TextSpan(
-                                text: 'Register now', 
+                                text: 'Login in', 
                                 style: TextStyle(color: _textColor, fontWeight: FontWeight.bold)
                               ),
                             ],
@@ -222,6 +252,68 @@ class _AuthInput extends StatelessWidget {
           borderSide: const BorderSide(color: Color(0xFFEF91A3), width: 1.5),
         ),
       ),
+    );
+  }
+}
+
+
+
+//Check box for terms and conditions
+
+class _TermsCheckbox extends StatefulWidget {
+  const _TermsCheckbox();
+
+  @override
+  State<_TermsCheckbox> createState() => _TermsCheckboxState();
+}
+
+class _TermsCheckboxState extends State<_TermsCheckbox> {
+  bool _isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 20,
+          width: 20,
+          child: Checkbox(
+            value: _isChecked,
+            activeColor: _primaryColor,
+            side: const BorderSide(color: _hintColor, width: 1.2),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            onChanged: (bool? value) {
+              setState(() {
+                _isChecked = value ?? false;
+              });
+            },
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: RichText(
+            text: const TextSpan(
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: 12,
+                color: _hintColor,
+                height: 1.4,
+              ),
+              children: [
+                TextSpan(text: 'By checking the box you agree to our '),
+                TextSpan(
+                  text: 'Terms and Conditions',
+                  style: TextStyle(
+                    color: _textColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

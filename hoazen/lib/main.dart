@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hoazen/views/onboarding/sign_in_screen.dart';
 import 'firebase_options.dart';
+import 'package:hoazen/views/onboarding/sign_in_screen.dart';
+import 'package:hoazen/views/onboarding/sign_up_screen.dart';
+import 'package:hoazen/views/onboarding/test_screen.dart';
 
 void main() async {
   // Required to ensure the Flutter engine is ready before Firebase starts
@@ -29,8 +31,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      // This tells the app to load your SignInScreen first!
-      home: const SignInScreen(),
+      // This tells the app to load your TestScreen first!
+      home: const SignUpScreen(),
     );
   }
 }
