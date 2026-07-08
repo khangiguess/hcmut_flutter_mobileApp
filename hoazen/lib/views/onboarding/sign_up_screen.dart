@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// Global constants for the sign-in screen.
+// Global constants for the sign-up screen.
 const iconImage = 'assets/hoazen.png';
 const _primaryColor = Color(0xFF42624B);
 const _secondaryColor = Color(0xFFAAC29E);
@@ -52,6 +52,7 @@ class SignUpScreen extends StatelessWidget {
                         ),
                       ),
 
+                      const SizedBox(height: 16),
 
                       Text(
                         'Sign Up',
@@ -74,14 +75,13 @@ class SignUpScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
-
+                      const SizedBox(height: 48),
 
                       const _AuthInput(
                         hintText: 'Full name',
                         suffixIcon: Icon(Icons.person_outline, color: _hintColor),
                         obscureText: false,
-                        backgroundColor: Color(0xFFFCF8F9), 
+                        backgroundColor: Color(0xFFFCF8F9), // Faint pink for the first box
                       ),
 
                       const SizedBox(height: 16),
@@ -90,7 +90,7 @@ class SignUpScreen extends StatelessWidget {
                         hintText: 'Valid email',
                         suffixIcon: Icon(Icons.email_outlined, color: _hintColor),
                         obscureText: false,
-                        backgroundColor: Color(0xFFFCF8F9), 
+                        backgroundColor: Color(0xFFF5F5F5), // Light grey background
                       ),
 
                       const SizedBox(height: 16),
@@ -99,31 +99,13 @@ class SignUpScreen extends StatelessWidget {
                         hintText: 'Strong password',
                         suffixIcon: Icon(Icons.visibility_off_outlined, color: _hintColor),
                         obscureText: true,
-                        backgroundColor: Color(0xFFF5F5F5), 
+                        backgroundColor: Color(0xFFF5F5F5), // Light grey background
                       ),
 
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 32),
 
-
-                      //Check box for terms and conditions
-
-                      const Row(children: [
-                        Checkbox(value: true, onChanged: null),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'By checking to the box, you agree to our Terms and Conditions',
-                            style: TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 13,
-                              color: _hintColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                      ),
-
-                      const SizedBox(height: 16),
+                      // Custom working Checkbox row
+                      const _TermsCheckbox(),
 
                       const Spacer(), 
 
@@ -153,7 +135,7 @@ class SignUpScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Sign Up',
+                                  'Next',
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -203,7 +185,10 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
-class _AuthInput extends StatelessWidget {
+
+
+// Authentication input field widget
+class _AuthInput extends StatefulWidget {
   const _AuthInput({
     required this.hintText,
     this.suffixIcon,
@@ -217,36 +202,63 @@ class _AuthInput extends StatelessWidget {
   final Color backgroundColor;
 
   @override
+  State<_AuthInput> createState() => _AuthInputState();
+}
+
+class _AuthInputState extends State<_AuthInput> {
+  late bool _isObscured;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the state based on what was passed into the widget
+    _isObscured = widget.obscureText;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // If the field is meant to be a password field (obscureText is true),
+    // we override the provided suffix icon with a clickable IconButton.
+    Widget? activeSuffixIcon = widget.suffixIcon;
+    
+    if (widget.obscureText) {
+      activeSuffixIcon = IconButton(
+        icon: Icon(
+          _isObscured ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+          color: _hintColor,
+        ),
+        onPressed: () {
+          setState(() {
+            _isObscured = !_isObscured;
+          });
+        },
+        // Prevent the icon button from having a massive splash radius that messes up padding
+        splashRadius: 24, 
+      );
+    }
+
     return TextField(
-      obscureText: obscureText,
+      obscureText: _isObscured,
       style: const TextStyle(fontFamily: 'Poppins', color: Colors.black87),
       decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: TextStyle(
+        hintText: widget.hintText,
+        hintStyle: const TextStyle(
           fontFamily: 'Poppins',
-          color: const Color(0xFFC4C4C4), // Adjusted slightly so it's readable 
+          color: Color(0xFFC4C4C4), 
           fontSize: 14,
         ),
-        
         filled: true,
-        fillColor: backgroundColor, 
+        fillColor: widget.backgroundColor, 
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        suffixIcon: suffixIcon,
-
-        // 1. The BASE border (forces Flutter to remove default underlines/borders entirely)
+        suffixIcon: activeSuffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide.none,
         ),
-
-        // 2. The border when NOT selected (forces it to be completely invisible)
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Colors.transparent, width: 0),
         ),
-
-        // 3. The border when IS selected (Shows your beautiful pink outline!)
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: Color(0xFFEF91A3), width: 1.5),
@@ -256,9 +268,6 @@ class _AuthInput extends StatelessWidget {
   }
 }
 
-
-
-//Check box for terms and conditions
 
 class _TermsCheckbox extends StatefulWidget {
   const _TermsCheckbox();
