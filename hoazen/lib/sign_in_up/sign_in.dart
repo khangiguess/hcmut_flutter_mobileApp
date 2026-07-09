@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hoazen/sign_in_up/sign_up.dart';
+import 'auth_service.dart';
+import 'package:hoazen/appBar.dart';
+
 
 // Global constants for the sign-in screen.
 const iconImage = 'assets/hoazen.png';
@@ -10,8 +14,63 @@ const _borderColor = Color(0xFFEF91A3);
 const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  // Controllers to read the text input
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  
+  // Loading state for the button
+  bool _isLoading = false;
+
+  // Firebase Sign In Logic utilizing your AuthService
+  Future<void> _signIn() async {
+    // Basic validation
+    if (_emailController.text.trim().isEmpty || _passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await AuthService().signIn(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      
+
+      if (FirebaseAuth.instance.currentUser != null) {
+        //Using pushReplacement so users can't swipe back to login screen
+        Navigator.pushReplacement(
+          context, 
+          MaterialPageRoute(builder: (context) => HoaZenApp())
+        );
+      }
+      
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +100,8 @@ class SignInScreen extends StatelessWidget {
                         child: Image.asset(
                           iconImage,
                           fit: BoxFit.contain,
-                          height: 120, 
-                          width: 160,
+                          height: 140, 
+                          width: 200,
                           errorBuilder: (context, error, stackTrace) {
                             return const Icon(
                               Icons.eco_outlined,
@@ -52,8 +111,6 @@ class SignInScreen extends StatelessWidget {
                           },
                         ),
                       ),
-
-                      const SizedBox(height: 16),
 
                       Text(
                         'Sign In',
@@ -78,22 +135,22 @@ class SignInScreen extends StatelessWidget {
 
                       const SizedBox(height: 48),
 
-                      // 1. Email input (Faint pink background)
-                      const _AuthInput(
+                      _AuthInput(
+                        controller: _emailController,
                         hintText: 'Enter your email',
-                        suffixIcon: Icon(Icons.email_outlined, color: _hintColor),
+                        suffixIcon: const Icon(Icons.email_outlined, color: _hintColor),
                         obscureText: false,
-                        backgroundColor: Color(0xFFFCF8F9), 
+                        backgroundColor: const Color(0xFFFCF8F9), 
                       ),
 
                       const SizedBox(height: 16),
 
-                      // 2. Password input (Light grey background)
-                      const _AuthInput(
+                      _AuthInput(
+                        controller: _passwordController,
                         hintText: 'Password',
-                        suffixIcon: Icon(Icons.visibility_off_outlined, color: _hintColor),
+                        suffixIcon: const Icon(Icons.visibility_off_outlined, color: _hintColor),
                         obscureText: true,
-                        backgroundColor: Color(0xFFF5F5F5), 
+                        backgroundColor: const Color(0xFFF5F5F5), 
                       ),
 
                       const Spacer(), 
@@ -110,31 +167,41 @@ class SignInScreen extends StatelessWidget {
                             ),
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: _isLoading ? null : _signIn,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
                               foregroundColor: Colors.white,
+                              disabledForegroundColor: Colors.white70,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Next',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: 'Poppins',
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 3,
+                                    ),
+                                  )
+                                : const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Next',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'Poppins',
+                                        ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white),
+                                    ],
                                   ),
-                                ),
-                                SizedBox(width: 8),
-                                Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white),
-                              ],
-                            ),
                           ),
                         ),
                       ),
@@ -145,7 +212,9 @@ class SignInScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpScreen(),
+                            ),
                           );
                         },
                         style: TextButton.styleFrom(
@@ -184,13 +253,15 @@ class _AuthInput extends StatefulWidget {
     required this.hintText,
     this.suffixIcon,
     this.obscureText = false,
-    required this.backgroundColor, 
+    required this.backgroundColor,
+    this.controller,
   });
 
   final String hintText;
   final Widget? suffixIcon;
   final bool obscureText;
   final Color backgroundColor;
+  final TextEditingController? controller;
 
   @override
   State<_AuthInput> createState() => _AuthInputState();
@@ -202,14 +273,11 @@ class _AuthInputState extends State<_AuthInput> {
   @override
   void initState() {
     super.initState();
-    // Initialize the state based on what was passed into the widget
     _isObscured = widget.obscureText;
   }
 
   @override
   Widget build(BuildContext context) {
-    // If the field is meant to be a password field (obscureText is true),
-    // we override the provided suffix icon with a clickable IconButton.
     Widget? activeSuffixIcon = widget.suffixIcon;
     
     if (widget.obscureText) {
@@ -223,12 +291,12 @@ class _AuthInputState extends State<_AuthInput> {
             _isObscured = !_isObscured;
           });
         },
-        // Prevent the icon button from having a massive splash radius that messes up padding
         splashRadius: 24, 
       );
     }
 
     return TextField(
+      controller: widget.controller,
       obscureText: _isObscured,
       style: const TextStyle(fontFamily: 'Poppins', color: Colors.black87),
       decoration: InputDecoration(

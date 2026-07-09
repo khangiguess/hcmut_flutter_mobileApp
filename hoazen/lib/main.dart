@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
+import 'appBar.dart';
 
 void main() async {
   // Required to ensure the Flutter engine is ready before Firebase starts
