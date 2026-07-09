@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoazen/views/onboarding/sign_in_screen.dart';
+import 'package:hoazen/sign_in_up/sign_up.dart';
 
-// Global constants for the sign-up screen.
+// Global constants for the sign-in screen.
 const iconImage = 'assets/hoazen.png';
 const _primaryColor = Color(0xFF42624B);
 const _secondaryColor = Color(0xFFAAC29E);
@@ -10,8 +10,8 @@ const _borderColor = Color(0xFFEF91A3);
 const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
-class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({super.key});
+class SignInScreen extends StatelessWidget {
+  const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class SignUpScreen extends StatelessWidget {
                       const SizedBox(height: 16),
 
                       Text(
-                        'Sign Up',
+                        'Sign In',
                         style: GoogleFonts.lora(
                           textStyle: Theme.of(context).textTheme.displayLarge,
                           fontSize: 42, 
@@ -78,35 +78,23 @@ class SignUpScreen extends StatelessWidget {
 
                       const SizedBox(height: 48),
 
+                      // 1. Email input (Faint pink background)
                       const _AuthInput(
-                        hintText: 'Full name',
-                        suffixIcon: Icon(Icons.person_outline, color: _hintColor),
-                        obscureText: false,
-                        backgroundColor: Color(0xFFFCF8F9), // Faint pink for the first box
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      const _AuthInput(
-                        hintText: 'Valid email',
+                        hintText: 'Enter your email',
                         suffixIcon: Icon(Icons.email_outlined, color: _hintColor),
                         obscureText: false,
-                        backgroundColor: Color(0xFFF5F5F5), // Light grey background
+                        backgroundColor: Color(0xFFFCF8F9), 
                       ),
 
                       const SizedBox(height: 16),
 
+                      // 2. Password input (Light grey background)
                       const _AuthInput(
-                        hintText: 'Strong password',
+                        hintText: 'Password',
                         suffixIcon: Icon(Icons.visibility_off_outlined, color: _hintColor),
                         obscureText: true,
-                        backgroundColor: Color(0xFFF5F5F5), // Light grey background
+                        backgroundColor: Color(0xFFF5F5F5), 
                       ),
-
-                      const SizedBox(height: 32),
-
-                      // Custom working Checkbox row
-                      const _TermsCheckbox(),
 
                       const Spacer(), 
 
@@ -157,7 +145,7 @@ class SignUpScreen extends StatelessWidget {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const SignInScreen()),
+                            MaterialPageRoute(builder: (context) => const SignUpScreen()),
                           );
                         },
                         style: TextButton.styleFrom(
@@ -168,11 +156,11 @@ class SignUpScreen extends StatelessWidget {
                           text: const TextSpan(
                             style: TextStyle(fontFamily: 'Poppins', fontSize: 13),
                             children: [
-                              TextSpan(text: 'Already a member', style: TextStyle(color: _hintColor)),
+                              TextSpan(text: 'New member ', style: TextStyle(color: _hintColor)),
                               TextSpan(text: '?', style: TextStyle(color: _hintColor)),
                               TextSpan(text: ' ', style: TextStyle(color: _hintColor)),
                               TextSpan(
-                                text: 'Login in', 
+                                text: 'Register now', 
                                 style: TextStyle(color: _textColor, fontWeight: FontWeight.bold)
                               ),
                             ],
@@ -191,9 +179,6 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
-
-
-// Authentication input field widget
 class _AuthInput extends StatefulWidget {
   const _AuthInput({
     required this.hintText,
@@ -270,65 +255,6 @@ class _AuthInputState extends State<_AuthInput> {
           borderSide: const BorderSide(color: Color(0xFFEF91A3), width: 1.5),
         ),
       ),
-    );
-  }
-}
-
-
-class _TermsCheckbox extends StatefulWidget {
-  const _TermsCheckbox();
-
-  @override
-  State<_TermsCheckbox> createState() => _TermsCheckboxState();
-}
-
-class _TermsCheckboxState extends State<_TermsCheckbox> {
-  bool _isChecked = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: 20,
-          width: 20,
-          child: Checkbox(
-            value: _isChecked,
-            activeColor: _primaryColor,
-            side: const BorderSide(color: _hintColor, width: 1.2),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            onChanged: (bool? value) {
-              setState(() {
-                _isChecked = value ?? false;
-              });
-            },
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: RichText(
-            text: const TextSpan(
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 12,
-                color: _hintColor,
-                height: 1.4,
-              ),
-              children: [
-                TextSpan(text: 'By checking the box you agree to our '),
-                TextSpan(
-                  text: 'Terms and Conditions',
-                  style: TextStyle(
-                    color: _textColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

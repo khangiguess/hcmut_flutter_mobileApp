@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hoazen/views/onboarding/sign_in_screen.dart';
+import 'package:hoazen/sign_in_up/sign_in.dart';
 
 // Global constants for the sign-up screen.
 const iconImage = 'assets/hoazen.png';
