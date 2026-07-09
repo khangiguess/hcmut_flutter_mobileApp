@@ -117,8 +117,24 @@ class FlowerPage extends StatelessWidget {
               child: ImageAnimationWidget(),
             ),
           ),
+
+
           
           const SizedBox(height: 24),
+
+          Container(
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+            decoration: BoxDecoration(
+              color: ZenColors.headerGreen,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Text(
+              'Welcome to HoaZen! Tap the flower to watch it bloom. '
+              'Complete your daily check-in to see your progress and growth.',
+              style: TextStyle(color: Colors.white, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ),
 
           // 2. Daily Check-In Card Flow Element
           DailyCheckInCard(onCheckIn: () => _startCheckIn(context)),
