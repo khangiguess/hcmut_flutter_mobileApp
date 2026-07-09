@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
+import 'package:hoazen/appBar.dart';
+
 
 // Global constants for the sign-up screen.
 const iconImage = 'assets/hoazen.png';
@@ -122,7 +124,12 @@ class SignUpScreen extends StatelessWidget {
                             ),
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HoaZenApp()),
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
