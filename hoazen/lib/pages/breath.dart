@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../shared/checkin_common.dart';
 
 class breathPage extends StatefulWidget {
   const breathPage({super.key});
@@ -199,9 +200,9 @@ class _RippleCluster extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Image.asset('assets/breath/breath_circle.png', width: 280), // outermost
-          Image.asset('assets/breath/breath_circle.png', width: 210), // middle
-          Image.asset('assets/breath/breath_circle.png', width: 150), // innermost
+          Image.asset('assets/breath/breath_circle1.png', width: 280), // outermost
+          Image.asset('assets/breath/breath_circle2.png', width: 210), // middle
+          Image.asset('assets/breath/breath_circle3.png', width: 150), // innermost
           Image.asset('assets/breath/breath_flower.png', width: 92),   // lotus
         ],
       ),
@@ -216,37 +217,43 @@ class _BeginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 180,
-        height: 52,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(26),
-          gradient: const LinearGradient(
-            colors: [Color(0xFFF3A6BA), Color(0xFFF8C8D5)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFF3A6BA).withOpacity(0.4),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Text(
-          running ? 'Pause' : 'Begin',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
-        ),
-      ),
+    return Column(
+      children: [
+        const SizedBox(height: 22),
+        PinkPillButton(label: running ? 'Pause' : 'Begin', onPressed: onTap),
+      ],
     );
+    // return GestureDetector(
+    //   onTap: onTap,
+    //   child: Container(
+    //     width: 180,
+    //     height: 52,
+    //     alignment: Alignment.center,
+    //     decoration: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(26),
+    //       gradient: const LinearGradient(
+    //         colors: [Color(0xFFF3A6BA), Color(0xFFF8C8D5)],
+    //         begin: Alignment.centerLeft,
+    //         end: Alignment.centerRight,
+    //       ),
+    //       boxShadow: [
+    //         BoxShadow(
+    //           color: const Color(0xFFF3A6BA).withOpacity(0.4),
+    //           blurRadius: 16,
+    //           offset: const Offset(0, 6),
+    //         ),
+    //       ],
+    //     ),
+    //     child: Text(
+    //       running ? 'Pause' : 'Begin',
+    //       style: const TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 16,
+    //         fontWeight: FontWeight.w600,
+    //         letterSpacing: 0.5,
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
