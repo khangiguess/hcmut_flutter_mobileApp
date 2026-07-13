@@ -1,12 +1,57 @@
 import 'dart:async';
+import 'dart:convert'; // Required for parsing JSON data
 import 'package:flutter/material.dart';
 import '../../shared/checkin_common.dart';
 import 'quiz.dart';
 import '../journal/calendar.dart';
+import 'package:http/http.dart' as http; // Required for the network call
 
 // Global index variable to keep track of the animation frame state
 int _savedGlobalFrameIndex = 0;
+Future<Map<String, String>> fetchQuoteOfTheDay() async {
+  try {
+    // URL for API Ninjas quotes
+    const url = 'https://api.api-ninjas.com/v2/quoteoftheday';
+    final uri = Uri.parse(url);
 
+    final response = await http.get(
+      uri,
+      headers: {
+        // This is where your unique API key is sent to gain access
+        'X-Api-Key': '9iemY8EQLBceU4osNv0pMItAFdnT79gPE0l301L1', 
+      },
+    ).timeout(const Duration(seconds: 7));
+
+    debugPrint("Status Code: ${response.statusCode}");
+    debugPrint("Response Body: ${response.body}");
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+
+      if (data.isNotEmpty) {
+        // API Ninjas returns fields named 'quote' and 'author'
+        return {
+          'quote': data[0]['quote'] ?? 'Peace comes from within.',
+          'author': data[0]['author'] ?? 'Unknown',
+        };
+      }
+    }
+  } 
+  catch (e, stackTrace) {
+    debugPrint("ERROR: $e");
+    debugPrint("STACK TRACE:");
+    debugPrint(stackTrace.toString());
+  }
+
+  // Safe fallback if the user is completely offline
+  return {
+    'quote': "When you've got nothing, you've got nothing to lose.",
+    'author': 'Bob Dylan',
+  };
+}
+// ==========================================================================
+// ANIMATED FLOWER WIDGET
+// ==========================================================================
 class ImageAnimationWidget extends StatefulWidget {
   const ImageAnimationWidget({super.key});
 
@@ -79,11 +124,26 @@ class _ImageAnimationWidgetState extends State<ImageAnimationWidget> {
   }
 }
 
-class FlowerPage extends StatelessWidget {
+// ==========================================================================
+// CORE FLOWER PAGE VIEW (Stateful to prevent endless rebuild API loops)
+// ==========================================================================
+class FlowerPage extends StatefulWidget {
   const FlowerPage({super.key});
 
-  /// Opens the Daily Check In stream. If the user clicks "View Journal"
-  /// on the completion screen, open the calendar page directory.
+  @override
+  State<FlowerPage> createState() => _FlowerPageState();
+}
+
+class _FlowerPageState extends State<FlowerPage> {
+  late Future<Map<String, String>> _quoteFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Kicks off the network link fetch process exactly once on page generation
+    _quoteFuture = fetchQuoteOfTheDay(); 
+  }
+
   Future<void> _startCheckIn(BuildContext context) async {
     final result = await Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (_) => const CheckInFlowScreen()),
@@ -110,33 +170,71 @@ class FlowerPage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
       child: Column(
         children: [
-          // 1. Interactive Animated Flower Widget (Replaced the generic placeholder box)
+          // 1. Interactive Animated Flower Widget
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 20.0),
             child: Center(
               child: ImageAnimationWidget(),
             ),
           ),
-
-
           
           const SizedBox(height: 24),
 
+// 2. Welcome to HoaZen Box (Now displays the parsed content inside the container borders)
           Container(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+            width: double.infinity,
+            padding: const EdgeInsets.all(20), 
             decoration: BoxDecoration(
               color: ZenColors.headerGreen,
               borderRadius: BorderRadius.circular(30),
             ),
-            child: const Text(
-              'Welcome to HoaZen! Tap the flower to watch it bloom. '
-              'Complete your daily check-in to see your progress and growth.',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-              textAlign: TextAlign.center,
+            child: FutureBuilder<Map<String, String>>(
+              future: _quoteFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
+                }
+
+                final String quoteText = snapshot.data?['quote'] ?? '';
+                final String authorText = snapshot.data?['author'] ?? '';
+
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '"$quoteText"',
+                      style: const TextStyle(
+                        color: Colors.white, 
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    
+                    if (authorText.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        '- $authorText',
+                        style: const TextStyle(
+                          color: Color(0xFFFFF2B2), // Soft bright accent contrast text
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ],
+                );
+              },
             ),
           ),
 
-          // 2. Daily Check-In Card Flow Element
+          // Clean visual gap between Welcome Box and Journal card
+          const SizedBox(height: 24), 
+
+          // 3. Daily Check-In Card Flow Element
           DailyCheckInCard(onCheckIn: () => _startCheckIn(context)),
         ],
       ),
