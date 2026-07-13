@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:hoazen/sign_in_up/sign_up.dart';
-import 'package:hoazen/sign_in_up/sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'pages/home/flower.dart';
-import 'pages/home/quiz.dart';
 import 'pages/journal/calendar.dart';
-import 'pages/journal/journal.dart';
 import 'pages/breath.dart';
 
 void main() {
@@ -37,6 +32,24 @@ class BottomNavigationBarExample extends StatefulWidget {
 
 class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample> {
   int _selectedIndex = 0;
+
+  String _resolveFirstName(User? user) {
+    if (user == null) {
+      return 'User';
+    }
+
+    final displayName = user.displayName?.trim() ?? '';
+    if (displayName.isNotEmpty) {
+      return displayName.split(RegExp(r'\s+')).first;
+    }
+
+    final email = user.email?.trim() ?? '';
+    if (email.contains('@')) {
+      return email.split('@').first;
+    }
+
+    return 'User';
+  }
 
   final List<Widget> _pages = [
     const FlowerPage(),
@@ -72,19 +85,20 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 ),
               ),
               
-              // 2. Greeting Text (Safely inside the Stack for custom positioning)
-              const Positioned(
-                bottom: 20, // Lowers the text closer to the white body card
-                left: 20,   // Side margins
-                child: Text(
-                  'Hello, Jess', 
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    fontSize: 28,
-                    fontFamily: 'Serif',
+              // 2. Greeting Text (shown only on Home tab)
+              if (_selectedIndex == 0)
+                Positioned(
+                  bottom: 20, // Lowers the text closer to the white body card
+                  left: 20,   // Side margins
+                  child: Text(
+                    'Hello, ${_resolveFirstName(FirebaseAuth.instance.currentUser)}',
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 28,
+                      fontFamily: 'Serif',
+                    ),
                   ),
                 ),
-              ),
               
               // 3. --- SCATTERED BUBBLES/DOTS MAP ---
               

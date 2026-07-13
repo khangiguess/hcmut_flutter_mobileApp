@@ -132,11 +132,7 @@ class _breathPageState extends State<breathPage>
           child: Center(
             child: AnimatedBuilder(
               animation: Listenable.merge([_controller, _release]),
-              builder: (context, child) {
-                return Transform.scale(scale: _displayScale, child: child);
-              },
-              // child is built once, not every frame — just transformed.
-              child: const _RippleCluster(),
+              builder: (context, _) => _RippleCluster(scale: _displayScale),
             ),
           ),
         ),
@@ -188,7 +184,8 @@ class _breathPageState extends State<breathPage>
 
 // Three concentric ring PNGs with the lotus centered on top.
 class _RippleCluster extends StatelessWidget {
-  const _RippleCluster();
+  final double scale;
+  const _RippleCluster({required this.scale});
 
   @override
   Widget build(BuildContext context) {
@@ -200,9 +197,17 @@ class _RippleCluster extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          Image.asset('assets/breath/breath_circle1.png', width: 280), // outermost
-          Image.asset('assets/breath/breath_circle2.png', width: 210), // middle
-          Image.asset('assets/breath/breath_circle3.png', width: 150), // innermost
+          Transform.scale(
+            scale: scale,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset('assets/breath/breath_circle1.png', width: 280), // outermost
+                Image.asset('assets/breath/breath_circle2.png', width: 210), // middle
+                Image.asset('assets/breath/breath_circle3.png', width: 150), // innermost
+              ],
+            ),
+          ),
           Image.asset('assets/breath/breath_flower.png', width: 92),   // lotus
         ],
       ),
