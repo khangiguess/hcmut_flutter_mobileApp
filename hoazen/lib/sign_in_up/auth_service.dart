@@ -1,5 +1,5 @@
-import'package:firebase_auth/firebase_auth.dart';
-import'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// Removed fluttertoast import
 
 class AuthService{
 
@@ -21,22 +21,21 @@ class AuthService{
         await userCredential.user?.updateDisplayName(name);
       }
 
-    } 
-
-    on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       String message = '';
         if (e.code == 'weak-password') {
             message = 'The password provided is too weak.';
         } else if (e.code == 'email-already-in-use') {
             message = 'An account already exists with that email.';
+        } else if (e.code == 'invalid-email') {
+            message = 'Please enter a valid email address.';
         } else {
             message = 'An error occurred. Please try again.';
         }
-
-        Fluttertoast.showToast(msg: message); // Show the error message as a toast
-    } 
-    catch (e) {
-      throw Exception('An unexpected error occurred.');
+        
+        throw CustomAuthException(message); 
+    } catch (e) {
+      throw CustomAuthException('An unexpected error occurred.');
     }
   }
 
@@ -52,17 +51,30 @@ class AuthService{
       );
     } on FirebaseAuthException catch (e) {
       String message = '';
-      if (e.code == 'user-not-found') {
-        message = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        message = 'Wrong password provided for that user.';
+      if (e.code == 'invalid-email') {
+        message = 'Please enter a valid email address';
+      } else if (e.code == 'user-not-found' || e.code == 'wrong-password' || e.code == 'invalid-credential') {
+        message = 'Invalid email or password.';
       } else {
         message = 'An error occurred. Please try again.';
       }
 
-      Fluttertoast.showToast(msg: message); // Show the error message as a toast
+      // Throw the error back to the screen instead of showing a toast
+      throw CustomAuthException(message); 
     } catch (e) {
-      throw Exception('An unexpected error occurred.');
+      throw CustomAuthException('An unexpected error occurred.');
     }
+  }
+}
+
+
+class CustomAuthException implements Exception {
+  final String message;
+  
+  CustomAuthException(this.message);
+  
+  @override
+  String toString() {
+    return message;
   }
 }

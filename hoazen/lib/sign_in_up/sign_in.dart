@@ -100,8 +100,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         child: Image.asset(
                           iconImage,
                           fit: BoxFit.contain,
-                          height: 140, 
-                          width: 200,
+                          height: 120, 
+                          width: 160,
                           errorBuilder: (context, error, stackTrace) {
                             return const Icon(
                               Icons.eco_outlined,
@@ -111,6 +111,8 @@ class _SignInScreenState extends State<SignInScreen> {
                           },
                         ),
                       ),
+
+                      const SizedBox(height: 16),
 
                       Text(
                         'Sign In',
