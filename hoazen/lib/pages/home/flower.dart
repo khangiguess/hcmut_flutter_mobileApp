@@ -1,3 +1,5 @@
+// Home page: flower/greeting section placeholder and the Daily Check-In card.
+
 import 'package:flutter/material.dart';
 import '../../shared/checkin_common.dart';
 import 'quiz.dart';
@@ -6,8 +8,7 @@ import '../journal/calendar.dart';
 class FlowerPage extends StatelessWidget {
   const FlowerPage({super.key});
 
-  /// (Phần của Khôi) Mở luồng Daily Check In; nếu người dùng bấm
-  /// "View Journal" ở màn Completed thì mở tiếp trang lịch.
+  // Opens the check-in flow, then the journal calendar if "View Journal" was tapped.
   Future<void> _startCheckIn(BuildContext context) async {
     final result = await Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (_) => const CheckInFlowScreen()),
@@ -34,10 +35,7 @@ class FlowerPage extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
       child: Column(
         children: [
-          // ------------------------------------------------------------------
-          // KHUNG CHỜ: phần bông hoa / lời chào của trang chủ do thành viên
-          // khác phụ trách — thay Container placeholder này bằng widget thật.
-          // ------------------------------------------------------------------
+          // Placeholder for the flower/greeting section owned by another teammate.
           Container(
             width: double.infinity,
             height: 220,
@@ -55,11 +53,7 @@ class FlowerPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 32),
-
-          // ------------------------------------------------------------------
-          // (Phần của Khôi) Card DAILY CHECK IN — khung hồng/mint dẫn vào
-          // luồng check-in 4 bước trong quiz.dart.
-          // ------------------------------------------------------------------
+          // Daily Check-In card leading into the 4-step flow.
           DailyCheckInCard(onCheckIn: () => _startCheckIn(context)),
         ],
       ),

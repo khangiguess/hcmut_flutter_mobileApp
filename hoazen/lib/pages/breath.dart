@@ -1,3 +1,5 @@
+// Breath page: placeholder screen for the breathing exercise feature.
+
 import 'package:flutter/material.dart';
 
 class breathPage extends StatelessWidget {

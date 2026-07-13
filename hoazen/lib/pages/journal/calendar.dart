@@ -1,8 +1,4 @@
-// ============================================================================
-// CALENDAR PAGE - Lịch cảm xúc theo tháng (phần của Khôi)
-// Bấm vào ngày có check-in → hiển thị journalPage (chi tiết ngày) ngay trong
-// tab này để giữ nguyên thanh nav dưới.
-// ============================================================================
+// Calendar page: monthly mood calendar; tapping a checked-in day opens its journal detail inline.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -19,15 +15,16 @@ class calendarPage extends StatefulWidget {
 
 class _calendarPageState extends State<calendarPage> {
   DateTime _month = DateTime(DateTime.now().year, DateTime.now().month, 1);
-  DateTime? _selectedDay; // != null → đang xem chi tiết 1 ngày
+  DateTime? _selectedDay;
 
+  // Moves the visible month backward or forward.
   void _changeMonth(int delta) {
     setState(() => _month = DateTime(_month.year, _month.month + delta, 1));
   }
 
   @override
   Widget build(BuildContext context) {
-    // Đang xem chi tiết 1 ngày → hiển thị journalPage thay cho lịch.
+    // Shows the journal detail in place of the calendar while a day is selected.
     if (_selectedDay != null) {
       return journalPage(
         date: _selectedDay!,
@@ -53,7 +50,7 @@ class _calendarPageState extends State<calendarPage> {
             ),
           ),
           const SizedBox(height: 8),
-          // Hàng điều hướng tháng: <  July 2026  >
+          // Month navigation row: previous / current month / next.
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -73,12 +70,12 @@ class _calendarPageState extends State<calendarPage> {
             ],
           ),
           const SizedBox(height: 25),
-          // Hàng tên thứ Mon..Sun.
+          // Weekday header row (Mon..Sun).
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Row(
               children: List.generate(7, (index) {
-                final day = DateTime(2024, 1, index + 1); // 1/1/2024 = Monday
+                final day = DateTime(2024, 1, index + 1);
                 return Expanded(
                   child: Center(
                     child: Text(
@@ -95,7 +92,7 @@ class _calendarPageState extends State<calendarPage> {
             ),
           ),
           const SizedBox(height: 6),
-          // Lưới ngày trong tháng.
+          // Day grid that rebuilds whenever the Firestore-backed store changes.
           Expanded(
             child: ListenableBuilder(
               listenable: CheckInStore.instance,
@@ -110,12 +107,12 @@ class _calendarPageState extends State<calendarPage> {
     );
   }
 
+  // Opens the day's journal, starts today's check-in, or shows a notice for empty past days.
   void _onDayTap(DateTime day) {
     final entry = CheckInStore.instance.entryFor(day);
     if (entry != null) {
       setState(() => _selectedDay = day);
     } else if (isSameDay(day, DateTime.now())) {
-      // Hôm nay chưa check-in → mở luồng check-in luôn.
       Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const CheckInFlowScreen()),
       );
@@ -127,10 +124,9 @@ class _calendarPageState extends State<calendarPage> {
   }
 }
 
-/// Lưới 7 cột các ngày trong tháng. Ngày có check-in hiện mặt cảm xúc SVG;
-/// ngày tương lai để trống; hôm nay có viền hồng + gạch chân số ngày.
+// 7-column month grid: mood face for checked-in days, blank for future days, pink highlight for today.
 class MonthCalendarGrid extends StatelessWidget {
-  final DateTime month; // ngày 1 của tháng
+  final DateTime month;
   final ValueChanged<DateTime> onDayTap;
   const MonthCalendarGrid(
       {super.key, required this.month, required this.onDayTap});
@@ -139,7 +135,7 @@ class MonthCalendarGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
     final firstWeekday = month.weekday;
-    final leadingEmpty = firstWeekday - 1; // lịch bắt đầu từ Thứ hai
+    final leadingEmpty = firstWeekday - 1;
     final today = DateTime.now();
 
     return GridView.builder(

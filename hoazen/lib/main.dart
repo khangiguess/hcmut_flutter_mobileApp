@@ -3,29 +3,31 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'pages/home/flower.dart';
-import 'pages/home/quiz.dart';
 import 'pages/journal/calendar.dart';
-import 'pages/journal/journal.dart';
 import 'pages/breath.dart';
 
-
-void main() {
+// App entry point: initializes Firebase before running the app.
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const HoaZenApp());
 }
 
+// Root widget of the HoaZen app.
 class HoaZenApp extends StatelessWidget {
   const HoaZenApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      
       title: 'HoaZen',
       debugShowCheckedModeBanner: false,
-      home: BottomNavigationBarExample()
+      home: BottomNavigationBarExample(),
     );
   }
 }
+
+// Main scaffold with the bottom navigation bar switching between Home, Journal and Breath tabs.
 class BottomNavigationBarExample extends StatefulWidget {
   const BottomNavigationBarExample({super.key});
 
@@ -57,21 +59,18 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [const Color(0xFF42624B), const Color(0xFFAAC29E)],
+              colors: [Color(0xFF42624B), Color(0xFFAAC29E)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
           ),
         ),
       ),
-
-
-
       body: _pages[_selectedIndex],
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color(0xFF42624B), const Color(0xFFAAC29E)],
+            colors: [Color(0xFF42624B), Color(0xFFAAC29E)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
@@ -84,19 +83,17 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
           selectedItemColor: const Color(0xFFFFF2B2),
           unselectedItemColor: const Color(0xFFBBC293),
           onTap: _onItemTapped,
-          
           showSelectedLabels: false,
           showUnselectedLabels: false,
           selectedFontSize: 0,
           unselectedFontSize: 0,
-
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.book), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.air), label: ''),
           ],
         ),
-      )
+      ),
     );
   }
 }

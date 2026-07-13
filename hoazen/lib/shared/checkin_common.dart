@@ -1,17 +1,10 @@
-// ============================================================================
-// SHARED - Dùng chung cho Daily Check-in (quiz.dart) và Journal
-// (calendar.dart / journal.dart). Phần của Khôi.
-// Gồm: bảng màu, hằng số lựa chọn, model + store dữ liệu, và các widget
-// chọn đáp án được tái sử dụng ở nhiều màn hình.
-// ============================================================================
+// Shared constants, data model, Firestore store and reusable widgets for the Daily Check-in and Journal features.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-// ---------------------------------------------------------------------------
-// Màu + font
-// ---------------------------------------------------------------------------
-
+// App color palette.
 class ZenColors {
   static const headerGreen = Color(0xFF64795C);
   static const completedGreen = Color(0xFFA3BC93);
@@ -24,27 +17,23 @@ class ZenColors {
 
 const String kSerifFont = 'serif';
 
-// ---------------------------------------------------------------------------
-// Các lựa chọn trong daily check-in
-// ---------------------------------------------------------------------------
-
+// One selectable option with a label and an icon asset.
 class MoodOption {
   final String label;
   final String asset;
   const MoodOption(this.label, this.asset);
 }
 
-/// 5 mức tâm trạng — SVG vector thật nên dùng SvgPicture.
+// The 5 mood levels shown as SVG faces.
 const List<MoodOption> kMoods = [
-  MoodOption('Terrible', 'assets/Terrible.svg'), // red
-  MoodOption('Sad', 'assets/sad.svg'), // gray
-  MoodOption('Normal', 'assets/Normal.svg'), // purple
-  MoodOption('Happy', 'assets/Happy.svg'), // green
-  MoodOption('Joyful', 'assets/Joyful.svg'), // yellow
+  MoodOption('Terrible', 'assets/Terrible.svg'),
+  MoodOption('Sad', 'assets/sad.svg'),
+  MoodOption('Normal', 'assets/Normal.svg'),
+  MoodOption('Happy', 'assets/Happy.svg'),
+  MoodOption('Joyful', 'assets/Joyful.svg'),
 ];
 
-// LƯU Ý: các icon dưới đây là SVG Figma chứa PNG nhúng (flutter_svg không
-// render được) nên dùng bản .png đã tách sẵn trong assets.
+// Energy level options (PNG icons because the Figma SVGs embed raster images).
 const List<MoodOption> kEnergyOptions = [
   MoodOption('Drained', 'assets/Low Battery.png'),
   MoodOption('Tired', 'assets/Napping.png'),
@@ -52,6 +41,7 @@ const List<MoodOption> kEnergyOptions = [
   MoodOption('Energised', 'assets/Sparkling.png'),
 ];
 
+// "What do you need most today?" options.
 const List<MoodOption> kNeedOptions = [
   MoodOption('Rest/Quiet', 'assets/Crescent Moon.png'),
   MoodOption('Connection', 'assets/Handshake.png'),
@@ -59,6 +49,7 @@ const List<MoodOption> kNeedOptions = [
   MoodOption('Energised', 'assets/Thinking Bubble.png'),
 ];
 
+// Feeling chips for the multi-select question.
 const List<String> kFeelings = [
   'Anxious', 'Sad', 'Angry', 'Happy',
   'Calm', 'Hopeful', 'Confused', 'Lonely',
@@ -66,10 +57,7 @@ const List<String> kFeelings = [
   'Crushed', 'Envious', 'Content', 'Peaceful',
 ];
 
-// ---------------------------------------------------------------------------
-// Model + Store (in-memory, chờ nối Firestore)
-// ---------------------------------------------------------------------------
-
+// One daily check-in record (mood, energy, feelings, need and an optional note).
 class CheckInEntry {
   final DateTime date;
   int mood;
@@ -87,38 +75,74 @@ class CheckInEntry {
     this.note = '',
   });
 
-  // TODO(firebase): add these two helpers when connecting to Firestore:
-  //   Map<String, dynamic> toMap() => {...};
-  //   factory CheckInEntry.fromMap(Map<String, dynamic> m) => ...;
+  // Serializes this entry into a Firestore document.
+  Map<String, dynamic> toMap() => {
+        'date': Timestamp.fromDate(DateTime(date.year, date.month, date.day)),
+        'mood': mood,
+        'energy': energy,
+        'feelings': feelings.toList(),
+        'need': need,
+        'note': note,
+      };
+
+  // Builds an entry from a Firestore document.
+  factory CheckInEntry.fromMap(Map<String, dynamic> map) => CheckInEntry(
+        date: (map['date'] as Timestamp).toDate(),
+        mood: map['mood'] as int,
+        energy: map['energy'] as int,
+        feelings: Set<String>.from(map['feelings'] as List? ?? const []),
+        need: map['need'] as int,
+        note: map['note'] as String? ?? '',
+      );
 }
 
-/// In-memory check-in store for the demo app.
-///
-/// TODO(firebase): switch this store to Firestore and keep the rest of the UI
-/// unchanged, because the screens already read and write through CheckInStore.
-/// Suggested collection: 'users/{uid}/checkins' with document id 'yyyy-MM-dd'.
+// Firestore-backed check-in store shared by all screens; keeps a live local cache of the 'checkins' collection.
 class CheckInStore extends ChangeNotifier {
   CheckInStore._() {
-    _seedMockData();
+    _listenToFirestore();
   }
 
   static final CheckInStore instance = CheckInStore._();
 
+  final CollectionReference<Map<String, dynamic>> _collection =
+      FirebaseFirestore.instance.collection('checkins');
+
   final Map<String, CheckInEntry> _entries = {};
+  bool _seedChecked = false;
 
-  String _key(DateTime d) => '${d.year}-${d.month}-${d.day}';
+  // Document id format: yyyy-MM-dd.
+  String _key(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
+  // Returns the cached entry for a day, or null if there is no check-in.
   CheckInEntry? entryFor(DateTime d) => _entries[_key(d)];
 
-  /// TODO(firebase): replace with Firestore writes, then notifyListeners().
-  void save(CheckInEntry entry) {
-    _entries[_key(entry.date)] = entry;
-    notifyListeners();
+  // Mirrors every Firestore change into the local cache and refreshes listeners.
+  void _listenToFirestore() {
+    _collection.snapshots().listen((snapshot) {
+      _entries.clear();
+      for (final doc in snapshot.docs) {
+        _entries[doc.id] = CheckInEntry.fromMap(doc.data());
+      }
+      if (!_seedChecked) {
+        _seedChecked = true;
+        if (snapshot.docs.isEmpty) _seedFakeData();
+      }
+      notifyListeners();
+    });
   }
 
-  /// Seed demo data only for past days so future dates remain blank.
-  void _seedMockData() {
+  // Saves an entry locally for instant UI feedback, then writes it to Firestore.
+  Future<void> save(CheckInEntry entry) async {
+    _entries[_key(entry.date)] = entry;
+    notifyListeners();
+    await _collection.doc(_key(entry.date)).set(entry.toMap());
+  }
+
+  // Uploads fake check-ins for past days of last month and this month when the collection is empty.
+  Future<void> _seedFakeData() async {
     final now = DateTime.now();
+    final batch = FirebaseFirestore.instance.batch();
     final months = [
       DateTime(now.year, now.month - 1, 1),
       DateTime(now.year, now.month, 1),
@@ -127,10 +151,9 @@ class CheckInStore extends ChangeNotifier {
       final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
       for (int d = 1; d <= daysInMonth; d++) {
         final date = DateTime(month.year, month.month, d);
-        if (date.isAfter(now)) continue;
-        if (isSameDay(date, now)) continue;
+        if (date.isAfter(now) || isSameDay(date, now)) continue;
         final r = (d * 17 + month.month * 5) % 91;
-        _entries[_key(date)] = CheckInEntry(
+        final entry = CheckInEntry(
           date: date,
           mood: r % 5,
           energy: r % 4,
@@ -143,14 +166,18 @@ class CheckInStore extends ChangeNotifier {
               ? 'I am keen for the presentation and to see the fireworks later today.'
               : '',
         );
+        batch.set(_collection.doc(_key(date)), entry.toMap());
       }
     }
+    await batch.commit();
   }
 }
 
+// Returns true when two dates fall on the same calendar day.
 bool isSameDay(DateTime a, DateTime b) =>
     a.year == b.year && a.month == b.month && a.day == b.day;
 
+// Full weekday name for a date.
 String weekdayName(DateTime date) {
   const names = [
     'Monday',
@@ -164,21 +191,19 @@ String weekdayName(DateTime date) {
   return names[date.weekday - 1];
 }
 
+// Short weekday name for a date.
 String weekdayShortName(DateTime date) {
   const names = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   return names[date.weekday - 1];
 }
 
+// Full month name for a month number (1-12).
 String monthName(int m) => const [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December',
     ][m - 1];
 
-// ---------------------------------------------------------------------------
-// Widget dùng chung
-// ---------------------------------------------------------------------------
-
-/// Nút hồng bo tròn (Check-in, Next, Submit, Add Notes…).
+// Rounded pink gradient button used across the check-in and journal screens.
 class PinkPillButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -224,7 +249,7 @@ class PinkPillButton extends StatelessWidget {
   }
 }
 
-/// Tiêu đề câu hỏi serif xanh.
+// Green serif title used for every check-in question.
 class QuestionTitle extends StatelessWidget {
   final String text;
   const QuestionTitle(this.text, {super.key});
@@ -243,9 +268,9 @@ class QuestionTitle extends StatelessWidget {
   }
 }
 
-/// Thanh progress + dòng "Progress X%".
+// Gradient progress bar with a "Progress X%" label for the check-in flow.
 class CheckInProgressBar extends StatelessWidget {
-  final double progress; // 0.0 → 1.0
+  final double progress;
   const CheckInProgressBar({super.key, required this.progress});
 
   @override
@@ -282,7 +307,7 @@ class CheckInProgressBar extends StatelessWidget {
   }
 }
 
-/// Hàng 5 mặt cảm xúc SVG. onChanged = null → read-only (dùng ở journal).
+// Row of 5 mood faces; pass onChanged null to render it read-only.
 class MoodSelector extends StatelessWidget {
   final int? selected;
   final ValueChanged<int>? onChanged;
@@ -314,7 +339,7 @@ class MoodSelector extends StatelessWidget {
   }
 }
 
-/// Hàng 4 ô vuông icon + nhãn (dùng cho câu Energy và câu Need).
+// Row of square icon+label cards shared by the Energy and Need questions.
 class SquareOptionRow extends StatelessWidget {
   final List<MoodOption> options;
   final int? selected;
@@ -359,7 +384,6 @@ class SquareOptionRow extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Icon .png (tách từ SVG Figma) — dùng Image.asset.
                 Image.asset(options[i].asset, width: 26, height: 26),
                 const SizedBox(height: 6),
                 Text(options[i].label,
@@ -374,6 +398,7 @@ class SquareOptionRow extends StatelessWidget {
   }
 }
 
+// Selector for the energy question.
 class EnergySelector extends StatelessWidget {
   final int? selected;
   final ValueChanged<int>? onChanged;
@@ -384,6 +409,7 @@ class EnergySelector extends StatelessWidget {
       options: kEnergyOptions, selected: selected, onChanged: onChanged);
 }
 
+// Selector for the need question.
 class NeedSelector extends StatelessWidget {
   final int? selected;
   final ValueChanged<int>? onChanged;
@@ -394,7 +420,7 @@ class NeedSelector extends StatelessWidget {
       options: kNeedOptions, selected: selected, onChanged: onChanged);
 }
 
-/// Lưới chip cảm xúc (chọn nhiều).
+// Multi-select grid of feeling chips.
 class FeelingSelector extends StatelessWidget {
   final Set<String> selected;
   final ValueChanged<String>? onToggle;

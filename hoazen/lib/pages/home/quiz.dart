@@ -1,14 +1,9 @@
-// ============================================================================
-// QUIZ PAGE - Daily Check In flow (phần của Khôi)
-// Gồm: DailyCheckInCard (khung hồng ở trang chủ), CheckInFlowScreen
-// (4 bước câu hỏi + progress) và CheckInCompletedView (màn hoàn thành).
-// ============================================================================
+// Daily Check-In flow: home card, 4-step question flow with progress, and the completion screen.
 
 import 'package:flutter/material.dart';
 import '../../shared/checkin_common.dart';
 
-/// Giữ đúng naming convention của team: quizPage = màn daily check-in.
-/// (Thực chất là wrapper của CheckInFlowScreen.)
+// Team naming convention wrapper: quizPage is the daily check-in screen.
 class quizPage extends StatelessWidget {
   const quizPage({super.key});
 
@@ -16,8 +11,7 @@ class quizPage extends StatelessWidget {
   Widget build(BuildContext context) => const CheckInFlowScreen();
 }
 
-/// Card mint "DAILY CHECK IN / How are you today?" + nút hồng Check-in.
-/// Được đặt ở trang chủ (flower.dart).
+// Mint "DAILY CHECK IN" card on the home page that launches the check-in flow.
 class DailyCheckInCard extends StatelessWidget {
   final VoidCallback onCheckIn;
   const DailyCheckInCard({super.key, required this.onCheckIn});
@@ -67,8 +61,7 @@ class DailyCheckInCard extends StatelessWidget {
   }
 }
 
-/// Luồng Daily Check In 4 bước: mood → energy → feelings → need.
-/// Navigator.pop trả về 'journal' nếu người dùng bấm "View Journal".
+// 4-step check-in flow (mood → energy → feelings → need); pops with 'journal' when "View Journal" is tapped.
 class CheckInFlowScreen extends StatefulWidget {
   const CheckInFlowScreen({super.key});
 
@@ -77,13 +70,14 @@ class CheckInFlowScreen extends StatefulWidget {
 }
 
 class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
-  int _step = 0; // 0..3
+  int _step = 0;
   bool _completed = false;
   int? _mood;
   int? _energy;
   final Set<String> _feelings = {};
   int? _need;
 
+  // True when the current step has an answer, enabling the Next/Submit button.
   bool get _stepAnswered => switch (_step) {
         0 => _mood != null,
         1 => _energy != null,
@@ -91,6 +85,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
         _ => _need != null,
       };
 
+  // Advances to the next step, or saves today's entry to Firestore on the last step.
   void _next() {
     if (_step < 3) {
       setState(() => _step++);
@@ -106,6 +101,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
     }
   }
 
+  // Goes back one step, or exits the flow from the first step.
   void _back() {
     if (_step > 0) {
       setState(() => _step--);
@@ -117,6 +113,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
   @override
   Widget build(BuildContext context) {
     if (_completed) return const CheckInCompletedView();
+    // Builds the question widget for the current step.
     final Widget question = switch (_step) {
       0 => Column(children: [
           const QuestionTitle('How are you today?'),
@@ -194,7 +191,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
   }
 }
 
-/// Màn "Completed Check In": nền xanh + card trắng với 2 nút.
+// Completion screen shown after submitting a check-in, with return and view-journal actions.
 class CheckInCompletedView extends StatelessWidget {
   const CheckInCompletedView({super.key});
 
@@ -226,7 +223,7 @@ class CheckInCompletedView extends StatelessWidget {
               const SizedBox(height: 16),
               PinkPillButton(
                 label: 'View Journal',
-                // Trả 'journal' về nơi mở flow (flower.dart xử lý tiếp).
+                // Returns 'journal' to the caller so it can open the calendar.
                 onPressed: () => Navigator.of(context).pop('journal'),
               ),
             ],
