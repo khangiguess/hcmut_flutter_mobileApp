@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'auth_service.dart';
-import 'package:hoazen/appBar.dart';
 
 
 // Global constants for the sign-in screen.
@@ -48,13 +46,7 @@ class _SignInScreenState extends State<SignInScreen> {
       );
       
 
-      if (FirebaseAuth.instance.currentUser != null) {
-        //Using pushReplacement so users can't swipe back to login screen
-        Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => HoaZenApp())
-        );
-      }
+      // Routing is handled by auth state in AppEntryGate (main.dart).
       
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
