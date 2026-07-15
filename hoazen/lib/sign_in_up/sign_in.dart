@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'auth_service.dart';
 import 'package:hoazen/appBar.dart';
+import 'package:hoazen/shared/checkin_common.dart';
 
 
 // Global constants for the sign-in screen.
@@ -49,10 +50,10 @@ class _SignInScreenState extends State<SignInScreen> {
       
 
       if (FirebaseAuth.instance.currentUser != null) {
-        //Using pushReplacement so users can't swipe back to login screen
+        // Replaces the login screen with a smooth fade/slide into the home screen.
         Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => HoaZenApp())
+          context,
+          FadeSlideRoute(page: const HoaZenApp()),
         );
       }
       

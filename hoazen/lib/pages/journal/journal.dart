@@ -1,16 +1,12 @@
-// ============================================================================
-// JOURNAL PAGE - Chi tiết check-in của 1 ngày + ghi chú (phần của Khôi)
-// Được calendarPage nhúng vào khi người dùng bấm 1 ngày trên lịch
-// (giữ nguyên thanh nav dưới). Bấm chevron trái để quay lại lịch.
-// ============================================================================
+// Journal detail page: shows one day's check-in answers, editable in place, plus an editable note.
 
 import 'package:flutter/material.dart';
 import '../../shared/checkin_common.dart';
 
-/// Giữ naming convention của team: journalPage = màn nhật ký chi tiết 1 ngày.
+// Detail view for a single day; embedded by calendarPage so the bottom nav stays visible.
 class journalPage extends StatefulWidget {
   final DateTime date;
-  final VoidCallback onBack; // quay lại lịch
+  final VoidCallback onBack;
   const journalPage({super.key, required this.date, required this.onBack});
 
   @override
@@ -21,8 +17,8 @@ class _journalPageState extends State<journalPage> {
   @override
   Widget build(BuildContext context) {
     final entry = CheckInStore.instance.entryFor(widget.date);
+    // Fallback to the calendar when the day has no data.
     if (entry == null) {
-      // Phòng hờ: không có dữ liệu thì quay về lịch.
       return Center(
         child: TextButton(onPressed: widget.onBack, child: const Text('Back')),
       );
@@ -47,35 +43,43 @@ class _journalPageState extends State<journalPage> {
             const Text('Daily Check In',
                 style: TextStyle(fontFamily: kSerifFont, fontSize: 36)),
             const SizedBox(height: 28),
-
-            // --- Câu 1: mood ---
+            // Answers of the 4 check-in questions, editable in place and saved on every change.
             const QuestionTitle('How are you today?'),
             const SizedBox(height: 14),
-            MoodSelector(selected: entry.mood), // onChanged null = read-only
+            MoodSelector(
+              selected: entry.mood,
+              onChanged: (v) => _updateEntry(entry, () => entry.mood = v),
+            ),
             const SizedBox(height: 34),
-
-            // --- Câu 2: energy ---
             const QuestionTitle('How is your energy today?'),
             const SizedBox(height: 14),
-            EnergySelector(selected: entry.energy),
+            EnergySelector(
+              selected: entry.energy,
+              onChanged: (v) => _updateEntry(entry, () => entry.energy = v),
+            ),
             const SizedBox(height: 34),
-
-            // --- Câu 3: feelings ---
             const QuestionTitle('What is on your heart?'),
             const SizedBox(height: 4),
             const Text('Choose all that applies',
                 style: TextStyle(color: ZenColors.textGreen, fontSize: 13)),
             const SizedBox(height: 14),
-            FeelingSelector(selected: entry.feelings),
+            FeelingSelector(
+              selected: entry.feelings,
+              onToggle: (f) => _updateEntry(entry, () {
+                entry.feelings.contains(f)
+                    ? entry.feelings.remove(f)
+                    : entry.feelings.add(f);
+              }),
+            ),
             const SizedBox(height: 34),
-
-            // --- Câu 4: need ---
             const QuestionTitle('What do you need most today?'),
             const SizedBox(height: 14),
-            NeedSelector(selected: entry.need),
+            NeedSelector(
+              selected: entry.need,
+              onChanged: (v) => _updateEntry(entry, () => entry.need = v),
+            ),
             const SizedBox(height: 40),
-
-            // --- Ghi chú của ngày ---
+            // Note card of the day with an add/edit button.
             const QuestionTitle('Write a note for today'),
             const SizedBox(height: 16),
             Container(
@@ -106,7 +110,13 @@ class _journalPageState extends State<journalPage> {
     );
   }
 
-  /// Mở hộp thoại viết/sửa ghi chú.
+  // Applies an in-place edit to the entry, refreshes the UI and saves it to Firestore.
+  void _updateEntry(CheckInEntry entry, VoidCallback change) {
+    setState(change);
+    CheckInStore.instance.save(entry);
+  }
+
+  // Opens the note dialog and persists the result to Firestore.
   Future<void> _openNoteDialog(CheckInEntry entry) async {
     final newNote = await showDialog<String>(
       context: context,
@@ -114,13 +124,13 @@ class _journalPageState extends State<journalPage> {
     );
     if (newNote != null) {
       entry.note = newNote;
-      CheckInStore.instance.save(entry); // TODO(firebase): sẽ ghi Firestore
+      CheckInStore.instance.save(entry);
       setState(() {});
     }
   }
 }
 
-/// Hộp thoại "Write a note for today": ô nhập nhiều dòng + nút Add Notes.
+// Dialog with a multiline text field for writing or editing the day's note.
 class NoteDialog extends StatefulWidget {
   final String initialText;
   const NoteDialog({super.key, required this.initialText});
