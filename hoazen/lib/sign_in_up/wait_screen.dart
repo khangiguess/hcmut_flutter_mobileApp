@@ -7,7 +7,7 @@ class WaitScreen extends StatelessWidget {
   static const _endGradient = Color(0xFF42624B);
   static const _spotColor = Color(0xFFF4E8B1);
   static const _logoStrokeColor = Color(0xFFFFACA9);
-  static const iconImage = 'assets/images/hoazen.png';
+  static const iconImage = 'assets/hoazen.png';
 
   @override
   Widget build(BuildContext context) {

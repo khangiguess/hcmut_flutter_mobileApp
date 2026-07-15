@@ -5,23 +5,6 @@ import 'pages/home/flower.dart';
 import 'pages/journal/calendar.dart';
 import 'pages/breath.dart';
 
-void main() {
-  runApp(const HoaZenApp());
-}
-
-class HoaZenApp extends StatelessWidget {
-  const HoaZenApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'HoaZen',
-      debugShowCheckedModeBanner: false,
-      home: BottomNavigationBarExample(),
-    );
-  }
-}
-
 class BottomNavigationBarExample extends StatefulWidget {
   const BottomNavigationBarExample({super.key});
 
@@ -63,6 +46,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
     });
   }
 
+  Future<void> _logout() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +71,34 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                   ),
                 ),
               ),
+
+                Positioned(
+                  top: 48,
+                  left: 20,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(0),
+                    child: Image.asset(
+                      'assets/hoazen.png',
+                      width: 55,
+                      height: 55,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+
+                Positioned(
+                  top: 48,
+                  right: 16,
+                  child: GestureDetector(
+                    onTap: _logout,
+                    child: Image.asset(
+                      'assets/OpenPane.png',
+                      width: 44,
+                      height: 44,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
               
               // 2. Greeting Text (shown only on Home tab)
               if (_selectedIndex == 0)
@@ -203,7 +218,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
         ),
       ),
 
-      body: _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),  
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
