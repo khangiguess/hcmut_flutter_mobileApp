@@ -224,7 +224,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
         ),
       ),
 
-      body: _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),  
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
