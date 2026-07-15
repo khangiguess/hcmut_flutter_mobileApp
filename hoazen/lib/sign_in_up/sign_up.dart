@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
 import 'package:hoazen/sign_in_up/auth_service.dart';
-import 'package:hoazen/appBar.dart';
 
 // Global constants for the sign-up screen.
 const iconImage = 'assets/hoazen.png';
@@ -26,6 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
   
   bool _isLoading = false;
+  bool _isTermsChecked = false;
 
 
   Future<void> _signUp() async {
@@ -47,12 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         name: _nameController.text.trim(),
       );
 
-      if (FirebaseAuth.instance.currentUser != null) {
-        Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => HoaZenApp())
-        );
-      }
+      // Routing is handled by auth state in AppEntryGate (main.dart).
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
@@ -139,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       _AuthInput(
                         controller: _nameController,
-                        hintText: 'Full name',
+                        hintText: 'Username',
                         suffixIcon: const Icon(Icons.person_outline, color: _hintColor),
                         obscureText: false,
                         backgroundColor: const Color(0xFFFCF8F9), 
@@ -167,7 +161,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       const SizedBox(height: 32),
 
-                      const _TermsCheckbox(),
+                      _TermsCheckbox(
+                        isChecked: _isTermsChecked,
+                        onChanged: (value) {
+                          setState(() {
+                            _isTermsChecked = value ?? false;
+                          });
+                        },
+                      ),
 
                       const Spacer(), 
 
@@ -183,7 +184,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                           ),
                           child: ElevatedButton(                            
-                            onPressed: _isLoading ? null : _signUp,
+                            onPressed: (_isLoading || !_isTermsChecked) ? null : _signUp,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
@@ -340,15 +341,16 @@ class _AuthInputState extends State<_AuthInput> {
 }
 
 
-class _TermsCheckbox extends StatefulWidget {
-  const _TermsCheckbox();
+class _TermsCheckbox extends StatelessWidget {
+  final bool isChecked;
+  
+  final ValueChanged<bool?> onChanged; 
 
-  @override
-  State<_TermsCheckbox> createState() => _TermsCheckboxState();
-}
-
-class _TermsCheckboxState extends State<_TermsCheckbox> {
-  bool _isChecked = false;
+  const _TermsCheckbox({
+    Key? key,
+    required this.isChecked,
+    required this.onChanged,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -359,15 +361,11 @@ class _TermsCheckboxState extends State<_TermsCheckbox> {
           height: 20,
           width: 20,
           child: Checkbox(
-            value: _isChecked,
+            value: isChecked, // Reads the value passed down from the screen
             activeColor: _primaryColor,
             side: const BorderSide(color: _hintColor, width: 1.2),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-            onChanged: (bool? value) {
-              setState(() {
-                _isChecked = value ?? false;
-              });
-            },
+            onChanged: onChanged, // Passes the tap event back up to the screen
           ),
         ),
         const SizedBox(width: 12),
