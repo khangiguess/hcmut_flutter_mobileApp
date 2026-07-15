@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+import 'package:hoazen/onboarding/onboarding_page.dart';
+import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
 import 'package:hoazen/sign_in_up/wait_screen.dart';
 import 'appBar.dart';
@@ -49,7 +50,7 @@ class AppEntryGate extends StatefulWidget {
 
 class _AppEntryGateState extends State<AppEntryGate> {
   static const _splashDuration = Duration(milliseconds: 2500);
-  bool _isSplashDone = false;
+  _AppFlowStep _step = _AppFlowStep.splash;
 
   @override
   void initState() {
@@ -60,30 +61,77 @@ class _AppEntryGateState extends State<AppEntryGate> {
       }
 
       setState(() {
-        _isSplashDone = true;
+        _step = _AppFlowStep.auth;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_isSplashDone) {
-      return const WaitScreen();
+    switch (_step) {
+      case _AppFlowStep.splash:
+        return const WaitScreen();
+      case _AppFlowStep.auth:
+        return SignInScreen(
+          onSignInSuccess: () {
+            if (!mounted) {
+              return;
+            }
+
+            setState(() {
+              _step = _AppFlowStep.home;
+            });
+          },
+          onCreateAccountTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => SignUpScreen(
+                  onSignUpSuccess: () {
+                    if (!mounted) {
+                      return;
+                    }
+
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _step = _AppFlowStep.onboarding;
+                    });
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      case _AppFlowStep.onboarding:
+        return OnboardingPage(
+          onFinish: () {
+            if (!mounted) {
+              return;
+            }
+
+            setState(() {
+              _step = _AppFlowStep.home;
+            });
+          },
+        );
+      case _AppFlowStep.home:
+        return BottomNavigationBarExample(
+          onLogoutSuccess: () {
+            if (!mounted) {
+              return;
+            }
+
+            setState(() {
+              _step = _AppFlowStep.auth;
+            });
+          },
+        );
     }
-
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const WaitScreen();
-        }
-
-        if (snapshot.data == null) {
-          return const SignInScreen();
-        }
-
-        return const BottomNavigationBarExample();
-      },
-    );
   }
+}
+
+enum _AppFlowStep {
+  splash,
+  auth,
+  onboarding,
+  home,
 }

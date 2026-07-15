@@ -12,7 +12,12 @@ const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({
+    super.key,
+    this.onSignUpSuccess,
+  });
+
+  final VoidCallback? onSignUpSuccess;
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -46,7 +51,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         name: _nameController.text.trim(),
       );
 
-      // Routing is handled by auth state in AppEntryGate (main.dart).
+      if (widget.onSignUpSuccess != null) {
+        widget.onSignUpSuccess!();
+        return;
+      }
+
+      // Return to the root route; AppEntryGate will route to onboarding/home.
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),

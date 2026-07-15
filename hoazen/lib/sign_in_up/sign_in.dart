@@ -13,7 +13,14 @@ const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  const SignInScreen({
+    super.key,
+    this.onSignInSuccess,
+    this.onCreateAccountTap,
+  });
+
+  final VoidCallback? onSignInSuccess;
+  final VoidCallback? onCreateAccountTap;
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -44,9 +51,8 @@ class _SignInScreenState extends State<SignInScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      
 
-      // Routing is handled by auth state in AppEntryGate (main.dart).
+      widget.onSignInSuccess?.call();
       
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -204,6 +210,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
                       TextButton(
                         onPressed: () {
+                          if (widget.onCreateAccountTap != null) {
+                            widget.onCreateAccountTap!();
+                            return;
+                          }
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
