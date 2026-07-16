@@ -7,16 +7,17 @@ import 'package:hoazen/onboarding/onboarding_page.dart';
 import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
 import 'package:hoazen/sign_in_up/wait_screen.dart';
+import 'package:hoazen/shared/checkin_common.dart';
 import 'appBar.dart';
 
 void main() async {
   // Required to ensure the Flutter engine is ready before Firebase starts
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
+
   runApp(const MyApp());
 }
 
@@ -68,6 +69,29 @@ class _AppEntryGateState extends State<AppEntryGate> {
 
   @override
   Widget build(BuildContext context) {
+    // Fades and slides gently between app flow steps (splash → auth → onboarding → home).
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 350),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.03),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        ),
+      ),
+      child: KeyedSubtree(
+        key: ValueKey(_step),
+        child: _buildStep(context),
+      ),
+    );
+  }
+
+  Widget _buildStep(BuildContext context) {
     switch (_step) {
       case _AppFlowStep.splash:
         return const WaitScreen();
@@ -84,8 +108,8 @@ class _AppEntryGateState extends State<AppEntryGate> {
           },
           onCreateAccountTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => SignUpScreen(
+              FadeSlideRoute(
+                page: SignUpScreen(
                   onSignUpSuccess: () {
                     if (!mounted) {
                       return;

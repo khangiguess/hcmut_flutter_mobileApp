@@ -279,4 +279,3 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
     );
   }
 }
-                                                                            
