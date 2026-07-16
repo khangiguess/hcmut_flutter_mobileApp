@@ -94,4 +94,20 @@ class AuthService{
 
       // Throw the error back to the screen instead of showing a toast
       throw CustomAuthException(message); 
-    } catc
+    } catch (e) {
+      throw CustomAuthException('An unexpected error occurred.');
+    }
+  }
+}
+
+
+class CustomAuthException implements Exception {
+  final String message;
+  
+  CustomAuthException(this.message);
+  
+  @override
+  String toString() {
+    return message;
+  }
+}
