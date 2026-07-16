@@ -21,14 +21,18 @@ class AuthService{
         await userCredential.user?.updateDisplayName(name);
       }
 
-      // Save the user's profile document so every account has the same structure in Firestore.
+      // Save the profile document (best-effort: never blocks a successful sign-up).
       final uid = userCredential.user?.uid;
       if (uid != null) {
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'name': name,
-          'email': email,
-          'createdAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+        try {
+          await FirebaseFirestore.instance.collection('users').doc(uid).set({
+            'name': name,
+            'email': email,
+            'createdAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        } catch (_) {
+          // Ignore profile write failures; authentication already succeeded.
+        }
       }
 
     } on FirebaseAuthException catch (e) {
@@ -60,18 +64,22 @@ class AuthService{
         password: password,
       );
 
-      // Backfill the profile document for accounts created before profiles were saved.
+      // Backfill the profile document (best-effort: never blocks a successful sign-in).
       final user = credential.user;
       if (user != null) {
-        final docRef =
-            FirebaseFirestore.instance.collection('users').doc(user.uid);
-        final doc = await docRef.get();
-        if (!doc.exists) {
-          await docRef.set({
-            'name': user.displayName ?? '',
-            'email': user.email ?? email,
-            'createdAt': FieldValue.serverTimestamp(),
-          });
+        try {
+          final docRef =
+              FirebaseFirestore.instance.collection('users').doc(user.uid);
+          final doc = await docRef.get();
+          if (!doc.exists) {
+            await docRef.set({
+              'name': user.displayName ?? '',
+              'email': user.email ?? email,
+              'createdAt': FieldValue.serverTimestamp(),
+            });
+          }
+        } catch (_) {
+          // Ignore profile backfill failures; authentication already succeeded.
         }
       }
     } on FirebaseAuthException catch (e) {
@@ -86,20 +94,4 @@ class AuthService{
 
       // Throw the error back to the screen instead of showing a toast
       throw CustomAuthException(message); 
-    } catch (e) {
-      throw CustomAuthException('An unexpected error occurred.');
-    }
-  }
-}
-
-
-class CustomAuthException implements Exception {
-  final String message;
-  
-  CustomAuthException(this.message);
-  
-  @override
-  String toString() {
-    return message;
-  }
-}
+    } catc
