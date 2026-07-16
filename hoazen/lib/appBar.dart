@@ -6,7 +6,12 @@ import 'pages/journal/calendar.dart';
 import 'pages/breath.dart';
 
 class BottomNavigationBarExample extends StatefulWidget {
-  const BottomNavigationBarExample({super.key});
+  const BottomNavigationBarExample({
+    super.key,
+    this.onLogoutSuccess,
+  });
+
+  final VoidCallback? onLogoutSuccess;
 
   @override
   State<BottomNavigationBarExample> createState() =>
@@ -48,6 +53,7 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
 
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
+    widget.onLogoutSuccess?.call();
   }
 
   @override

@@ -14,7 +14,12 @@ const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({
+    super.key,
+    this.onSignUpSuccess,
+  });
+
+  final VoidCallback? onSignUpSuccess;
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
