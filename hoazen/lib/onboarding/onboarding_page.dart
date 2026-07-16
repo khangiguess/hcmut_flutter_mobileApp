@@ -33,7 +33,7 @@ const _slides = <OnboardingSlide>[
   ),
   OnboardingSlide(
     background: Color(0xFFCDC3FC),
-    image: 'assets/onboarding/Breathe.png',
+    image: 'assets/Breathe.png',
     title: 'Breath',
     body: 'Follow gentle breathing exercises designed to help slow '
         'your mind and ease everyday stress.',
