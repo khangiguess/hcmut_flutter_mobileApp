@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthService{
 
@@ -24,13 +25,24 @@ class AuthService{
       // THIS IS THE LINK: We grab the 'uid' from the newly created Auth user
       String uid = userCredential.user!.uid;
 
-      // Create a document in the 'users' collection using that exact UID
-      await FirebaseFirestore.instance.collection('users').doc(uid).set({
-        'name': name,
-        'email': email,
-        'createdAt': FieldValue.serverTimestamp(),
-        // You can add anything else here later! (e.g., 'onboardingCompleted': false)
-      });
+      // Create a document in the 'users' collection using that exact UID.
+      // If Firestore rules block this write, we still want the auth account
+      // to be created so the app can redirect to the home screen.
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'name': name,
+          'email': email,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      } on FirebaseException catch (e) {
+        if (e.code == 'permission-denied' ||
+            e.code == 'unavailable' ||
+            e.code == 'failed-precondition') {
+          debugPrint('User profile write skipped due to Firestore issue: ${e.code} - ${e.message}');
+        } else {
+          rethrow;
+        }
+      }
 
     } on FirebaseAuthException catch (e) {
       String message = '';

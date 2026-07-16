@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hoazen/appBar.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
 import 'package:hoazen/sign_in_up/auth_service.dart';
 
@@ -46,7 +48,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         name: _nameController.text.trim(),
       );
 
-      // Routing is handled by auth state in AppEntryGate (main.dart).
+      if (FirebaseAuth.instance.currentUser != null) {
+        if (!mounted) return;
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const BottomNavigationBarExample()),
+          (route) => false,
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
