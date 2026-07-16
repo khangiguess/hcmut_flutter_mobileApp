@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
-
+import 'package:hoazen/setting/profile_page.dart';
 import 'pages/home/flower.dart';
 import 'pages/home/quiz.dart';
 import 'pages/journal/calendar.dart';
@@ -58,6 +58,22 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
       appBar: AppBar(
         toolbarHeight: 140, // Height increased to give spacing for text and dots
         automaticallyImplyLeading: false, // Prevents accidental back arrows
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(top: 12, right: 12),
+            child: IconButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              ),
+              icon: const Icon(
+                Icons.account_circle,
+                size: 32,
+                color: Colors.white,
+              ),
+              tooltip: 'Profile',
+            ),
+          ),
+        ],
         flexibleSpace: ClipRect(
           child: Stack(
             children: [
