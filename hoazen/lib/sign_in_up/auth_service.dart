@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// Removed fluttertoast import
 
 class AuthService{
 
@@ -19,6 +19,16 @@ class AuthService{
       // Update their display name if one was provided
       if (name.isNotEmpty) {
         await userCredential.user?.updateDisplayName(name);
+      }
+
+      // Save the user's profile document so every account has the same structure in Firestore.
+      final uid = userCredential.user?.uid;
+      if (uid != null) {
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'name': name,
+          'email': email,
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
       }
 
     } on FirebaseAuthException catch (e) {
@@ -45,10 +55,25 @@ class AuthService{
     required String password,
   }) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      // Backfill the profile document for accounts created before profiles were saved.
+      final user = credential.user;
+      if (user != null) {
+        final docRef =
+            FirebaseFirestore.instance.collection('users').doc(user.uid);
+        final doc = await docRef.get();
+        if (!doc.exists) {
+          await docRef.set({
+            'name': user.displayName ?? '',
+            'email': user.email ?? email,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+      }
     } on FirebaseAuthException catch (e) {
       String message = '';
       if (e.code == 'invalid-email') {

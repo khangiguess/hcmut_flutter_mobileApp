@@ -18,8 +18,22 @@ class BottomNavigationBarExample extends StatefulWidget {
       _BottomNavigationBarExampleState();
 }
 
-class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample> {
+class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
+    with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
+
+  // Drives a quick fade-in whenever the selected tab changes.
+  late final AnimationController _tabFadeController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 280),
+    value: 1,
+  );
+
+  @override
+  void dispose() {
+    _tabFadeController.dispose();
+    super.dispose();
+  }
 
   String _resolveFirstName(User? user) {
     if (user == null) {
@@ -46,9 +60,11 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
   ];
 
   void _onItemTapped(int index) {
+    if (index == _selectedIndex) return;
     setState(() {
       _selectedIndex = index;
     });
+    _tabFadeController.forward(from: 0);
   }
 
   Future<void> _logout() async {
@@ -224,10 +240,15 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
         ),
       ),
 
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),  
+      // Keeps every tab's state alive (IndexedStack) while fading gently between tabs.
+      body: FadeTransition(
+        opacity: CurvedAnimation(
+            parent: _tabFadeController, curve: Curves.easeOutCubic),
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: _pages,
+        ),
+      ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -258,3 +279,4 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
     );
   }
 }
+                                                                            

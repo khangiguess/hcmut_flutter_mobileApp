@@ -51,6 +51,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         name: _nameController.text.trim(),
       );
 
+      // Notifies the parent (auth gate) to switch to the home screen.
       if (widget.onSignUpSuccess != null) {
         widget.onSignUpSuccess!();
         return;
@@ -409,4 +410,4 @@ class _TermsCheckbox extends StatelessWidget {
       ],
     );
   }
-}
+}                                                                                                                                                                                                                                                                                                                                                                                

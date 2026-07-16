@@ -150,14 +150,15 @@ class _FlowerPageState extends State<FlowerPage> {
     _quoteFuture = fetchQuoteOfTheDay(); 
   }
 
+  // Opens the check-in flow with a fade/slide transition, then the journal if requested.
   Future<void> _startCheckIn(BuildContext context) async {
     final result = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => const CheckInFlowScreen()),
+      FadeSlideRoute(page: const CheckInFlowScreen()),
     );
     if (result == 'journal' && context.mounted) {
       Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => Scaffold(
+        FadeSlideRoute(
+          page: Scaffold(
             appBar: AppBar(
               title: const Text('Journal'),
               backgroundColor: ZenColors.headerGreen,
