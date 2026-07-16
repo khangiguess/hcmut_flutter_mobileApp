@@ -1,14 +1,60 @@
 import 'dart:async';
+import 'dart:convert'; // Required for parsing JSON data
 import 'package:flutter/material.dart';
 import '../../shared/checkin_common.dart';
 import 'quiz.dart';
 import '../journal/calendar.dart';
+import 'package:http/http.dart' as http; // Required for the network call
 
 // Global index variable to keep track of the animation frame state
 int _savedGlobalFrameIndex = 0;
+const String _apiBaseUrl = 'https://api.api-ninjas.com/v2/quoteoftheday';
+const String apiKey = '9iemY8EQLBceU4osNv0pMItAFdnT79gPE0l301L1';
 
+Future<Map<String, String>> fetchQuoteOfTheDay() async {
+  try { 
+    final uri = Uri.parse(_apiBaseUrl);
+    final response = await http.get(
+      uri,
+      headers: {
+        'X-Api-Key': apiKey,
+      },
+    ).timeout(const Duration(seconds: 7));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+
+      if (data.isNotEmpty) {
+        return {
+          'quote': data[0]['quote'] ?? 'Peace comes from within.',
+          'author': data[0]['author'] ?? 'Unknown',
+        };
+      }
+    }
+  } 
+  catch (e, stackTrace) {
+    debugPrint("ERROR: $e");
+    debugPrint("STACK TRACE:");
+    debugPrint(stackTrace.toString());
+  }
+
+  // Safe fallback if the user is completely offline
+  return {
+    'quote': "When you've got nothing, you've got nothing to lose.",
+    'author': 'Bob Dylan',
+  };
+}
+
+// ==========================================================================
+// ANIMATED FLOWER WIDGET
+// ==========================================================================
 class ImageAnimationWidget extends StatefulWidget {
-  const ImageAnimationWidget({super.key});
+  final VoidCallback onAnimationStart;
+
+  const ImageAnimationWidget({
+    super.key,
+    required this.onAnimationStart,
+  });
 
   @override
   State<ImageAnimationWidget> createState() => _ImageAnimationWidgetState();
@@ -41,6 +87,9 @@ class _ImageAnimationWidgetState extends State<ImageAnimationWidget> {
 
   void _startAnimation() {
     if (_isPlaying) return;
+
+    // Trigger the parent layout fade-in state
+    widget.onAnimationStart(); 
 
     setState(() {
       _isPlaying = true;
@@ -78,12 +127,29 @@ class _ImageAnimationWidgetState extends State<ImageAnimationWidget> {
     );
   }
 }
-
-class FlowerPage extends StatelessWidget {
+// ==========================================================================
+// CORE FLOWER PAGE VIEW (Now keeping state alive!)
+// ==========================================================================
+class FlowerPage extends StatefulWidget {
   const FlowerPage({super.key});
 
-  /// Opens the Daily Check In stream. If the user clicks "View Journal"
-  /// on the completion screen, open the calendar page directory.
+  @override
+  State<FlowerPage> createState() => _FlowerPageState();
+}
+
+// 1. Added "with AutomaticKeepAliveClientMixin"
+class _FlowerPageState extends State<FlowerPage> {
+  late Future<Map<String, String>> _quoteFuture;
+  bool _showQuote = false;
+
+  // 2. Overrode wantKeepAlive to return true
+  
+  @override
+  void initState() {
+    super.initState();
+    _quoteFuture = fetchQuoteOfTheDay(); 
+  }
+
   Future<void> _startCheckIn(BuildContext context) async {
     final result = await Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (_) => const CheckInFlowScreen()),
@@ -106,37 +172,99 @@ class FlowerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 24),
       child: Column(
         children: [
-          // 1. Interactive Animated Flower Widget (Replaced the generic placeholder box)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.0),
+          // 1. Interactive Animated Flower Widget
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20.0),
             child: Center(
-              child: ImageAnimationWidget(),
+              child: ImageAnimationWidget(
+                onAnimationStart: () {
+                  setState(() {
+                    _showQuote = true;
+                  });
+                },
+              ),
             ),
           ),
-
-
           
           const SizedBox(height: 24),
 
+          // 2. Welcome to HoaZen Box (Smoothly transitions from prompt to quote)
           Container(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 16),
+            width: double.infinity,
+            padding: const EdgeInsets.all(20), 
             decoration: BoxDecoration(
               color: ZenColors.headerGreen,
               borderRadius: BorderRadius.circular(30),
             ),
-            child: const Text(
-              'Welcome to HoaZen! Tap the flower to watch it bloom. '
-              'Complete your daily check-in to see your progress and growth.',
-              style: TextStyle(color: Colors.white, fontSize: 16),
-              textAlign: TextAlign.center,
+            child: AnimatedCrossFade(
+              crossFadeState: !_showQuote 
+                  ? CrossFadeState.showFirst 
+                  : CrossFadeState.showSecond,
+              duration: const Duration(milliseconds: 1800),
+              
+              firstChild: const SizedBox(
+                width: double.infinity,
+                child: Text(
+                  'Tap on the flower to bloom and reveal your daily quote!',
+                  style: TextStyle(
+                    color: Colors.white, 
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+
+              secondChild: FutureBuilder<Map<String, String>>(
+                future: _quoteFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    );
+                  }
+
+                  final String quoteText = snapshot.data?['quote'] ?? '';
+                  final String authorText = snapshot.data?['author'] ?? '';
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '"$quoteText"',
+                        style: const TextStyle(
+                          color: Colors.white, 
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      if (authorText.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          '- $authorText',
+                          style: const TextStyle(
+                            color: Color(0xFFFFF2B2), 
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ],
+                  );
+                },
+              ),
             ),
           ),
 
-          // 2. Daily Check-In Card Flow Element
+          const SizedBox(height: 24),
+          // 3. Daily Check-In Card Flow Element
           DailyCheckInCard(onCheckIn: () => _startCheckIn(context)),
         ],
       ),

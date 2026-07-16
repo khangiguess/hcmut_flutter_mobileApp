@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'auth_service.dart';
-import 'package:hoazen/appBar.dart';
 
 
 // Global constants for the sign-in screen.
@@ -15,7 +13,14 @@ const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+  const SignInScreen({
+    super.key,
+    this.onSignInSuccess,
+    this.onCreateAccountTap,
+  });
+
+  final VoidCallback? onSignInSuccess;
+  final VoidCallback? onCreateAccountTap;
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -46,15 +51,8 @@ class _SignInScreenState extends State<SignInScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      
 
-      if (FirebaseAuth.instance.currentUser != null) {
-        //Using pushReplacement so users can't swipe back to login screen
-        Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => HoaZenApp())
-        );
-      }
+      widget.onSignInSuccess?.call();
       
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -212,6 +210,11 @@ class _SignInScreenState extends State<SignInScreen> {
 
                       TextButton(
                         onPressed: () {
+                          if (widget.onCreateAccountTap != null) {
+                            widget.onCreateAccountTap!();
+                            return;
+                          }
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(

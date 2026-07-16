@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hoazen/appBar.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
 import 'package:hoazen/sign_in_up/auth_service.dart';
-import 'package:hoazen/appBar.dart';
 
 // Global constants for the sign-up screen.
 const iconImage = 'assets/hoazen.png';
@@ -14,7 +14,12 @@ const _hintColor = Color(0xFF8D8D8D);
 const _textColor = Color(0xFF22333B);
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({
+    super.key,
+    this.onSignUpSuccess,
+  });
+
+  final VoidCallback? onSignUpSuccess;
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -49,9 +54,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       );
 
       if (FirebaseAuth.instance.currentUser != null) {
-        Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => HoaZenApp())
+        if (!mounted) return;
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const BottomNavigationBarExample()),
+          (route) => false,
         );
       }
     } catch (e) {

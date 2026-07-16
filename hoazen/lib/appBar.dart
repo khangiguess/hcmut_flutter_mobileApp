@@ -5,30 +5,16 @@ import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
 import 'package:hoazen/setting/profile_page.dart';
 import 'pages/home/flower.dart';
-import 'pages/home/quiz.dart';
 import 'pages/journal/calendar.dart';
-import 'pages/journal/journal.dart';
 import 'pages/breath.dart';
 
-void main() {
-  runApp(const HoaZenApp());
-}
-
-class HoaZenApp extends StatelessWidget {
-  const HoaZenApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'HoaZen',
-      debugShowCheckedModeBanner: false,
-      home: BottomNavigationBarExample(),
-    );
-  }
-}
-
 class BottomNavigationBarExample extends StatefulWidget {
-  const BottomNavigationBarExample({super.key});
+  const BottomNavigationBarExample({
+    super.key,
+    this.onLogoutSuccess,
+  });
+
+  final VoidCallback? onLogoutSuccess;
 
   @override
   State<BottomNavigationBarExample> createState() =>
@@ -37,6 +23,24 @@ class BottomNavigationBarExample extends StatefulWidget {
 
 class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample> {
   int _selectedIndex = 0;
+
+  String _resolveFirstName(User? user) {
+    if (user == null) {
+      return 'User';
+    }
+
+    final displayName = user.displayName?.trim() ?? '';
+    if (displayName.isNotEmpty) {
+      return displayName.split(RegExp(r'\s+')).first;
+    }
+
+    final email = user.email?.trim() ?? '';
+    if (email.contains('@')) {
+      return email.split('@').first;
+    }
+
+    return 'User';
+  }
 
   final List<Widget> _pages = [
     const FlowerPage(),
@@ -48,6 +52,11 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<void> _logout() async {
+    await FirebaseAuth.instance.signOut();
+    widget.onLogoutSuccess?.call();
   }
 
   @override
@@ -87,20 +96,49 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                   ),
                 ),
               ),
-              
-              // 2. Greeting Text (Safely inside the Stack for custom positioning)
-              const Positioned(
-                bottom: 20, // Lowers the text closer to the white body card
-                left: 20,   // Side margins
-                child: Text(
-                  'Hello, Jess', 
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    fontSize: 28,
-                    fontFamily: 'Serif',
+
+                Positioned(
+                  top: 48,
+                  left: 20,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(0),
+                    child: Image.asset(
+                      'assets/hoazen.png',
+                      width: 55,
+                      height: 55,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-              ),
+
+                Positioned(
+                  top: 48,
+                  right: 16,
+                  child: GestureDetector(
+                    onTap: _logout,
+                    child: Image.asset(
+                      'assets/OpenPane.png',
+                      width: 44,
+                      height: 44,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              
+              // 2. Greeting Text (shown only on Home tab)
+              if (_selectedIndex == 0)
+                Positioned(
+                  bottom: 20, // Lowers the text closer to the white body card
+                  left: 20,   // Side margins
+                  child: Text(
+                    'Hello, ${_resolveFirstName(FirebaseAuth.instance.currentUser)}',
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 28,
+                      fontFamily: 'Serif',
+                    ),
+                  ),
+                ),
               
               // 3. --- SCATTERED BUBBLES/DOTS MAP ---
               
@@ -205,7 +243,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
         ),
       ),
 
-      body: _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),  
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

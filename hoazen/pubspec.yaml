@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.2.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -40,10 +41,12 @@ dependencies:
   firebase_auth: ^6.5.4
   fluttertoast: ^9.1.0
   cloud_firestore: ^6.7.1
+  liquid_swipe: ^3.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -76,6 +79,10 @@ flutter:
     - assets/photo/flower9.png
     - assets/photo/flower10.png
     - assets/photo/flower11.png
+    - assets/breath/breath_flower.png
+    - assets/breath/breath_circle1.png
+    - assets/breath/breath_circle2.png
+    - assets/breath/breath_circle3.png
 
   # To add assets to your application, add an assets section, like this:
   #   - images/a_dot_burr.jpeg
