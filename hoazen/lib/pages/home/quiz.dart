@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import '../../shared/checkin_common.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 // Team naming convention wrapper: quizPage is the daily check-in screen.
 class quizPage extends StatelessWidget {
@@ -35,9 +37,9 @@ class DailyCheckInCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
+          Text(
             'DAILY CHECK IN',
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               color: ZenColors.textGreen,
               fontSize: 16,
               letterSpacing: 2,
@@ -45,10 +47,9 @@ class DailyCheckInCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             'How are you today?',
-            style: TextStyle(
-              fontFamily: kSerifFont,
+            style: GoogleFonts.poppins(
               fontSize: 26,
               color: Colors.black87,
             ),
@@ -121,7 +122,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
   Widget _question(int step) => switch (step) {
         0 => Column(children: [
             const QuestionTitle('How are you today?'),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             MoodSelector(
               selected: _mood,
               onChanged: (v) => setState(() => _mood = v),
@@ -129,7 +130,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
           ]),
         1 => Column(children: [
             const QuestionTitle('How is your energy today?'),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             EnergySelector(
               selected: _energy,
               onChanged: (v) => setState(() => _energy = v),
@@ -140,7 +141,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
             const SizedBox(height: 4),
             const Text('Choose all that applies',
                 style: TextStyle(color: ZenColors.textGreen, fontSize: 13)),
-            const SizedBox(height: 16),
+            const SizedBox(height: 25),
             FeelingSelector(
               selected: _feelings,
               onToggle: (f) => setState(() {
@@ -152,7 +153,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
           ]),
         _ => Column(children: [
             const QuestionTitle('What do you need most today?'),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             NeedSelector(
               selected: _need,
               onChanged: (v) => setState(() => _need = v),
@@ -186,9 +187,12 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
                       size: 32, color: ZenColors.textGreen),
                 ),
               ),
-              const Text(
+              Text(
                 'Daily Check In',
-                style: TextStyle(fontFamily: kSerifFont, fontSize: 36),
+                style: GoogleFonts.lora(
+                  fontSize: 36,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(height: 20),
               CheckInProgressBar(progress: _step / 4),
@@ -259,10 +263,13 @@ class CheckInCompletedView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   'Completed\nCheck In',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: kSerifFont, fontSize: 40),
+                  style: GoogleFonts.lora(     // 👈 Replace TextStyle with GoogleFonts\
+                  fontSize: 36,
+                  fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(height: 28),
                 PinkPillButton(

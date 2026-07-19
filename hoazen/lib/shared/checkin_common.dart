@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 // Only this account receives the fake demo check-ins on first sign-in.
 const String kDemoAccountEmail = 'tranphandangkhoi205@gmail.com';
@@ -294,7 +296,7 @@ class PinkPillButton extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: const TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.white,
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -316,9 +318,8 @@ class QuestionTitle extends StatelessWidget {
     return Text(
       text,
       textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontFamily: kSerifFont,
-        fontSize: 28,
+      style: GoogleFonts.poppins(
+        fontSize: 24,
         color: ZenColors.textGreen,
       ),
     );
@@ -362,7 +363,7 @@ class CheckInProgressBar extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text('Progress ${(value * 100).round()}%',
-              style: const TextStyle(fontSize: 13, color: Colors.black87)),
+              style: GoogleFonts.poppins(fontSize: 13, color: Colors.black87)),
         ],
       ),
     );
@@ -460,7 +461,7 @@ class SquareOptionRow extends StatelessWidget {
                 Image.asset(options[i].asset, width: 26, height: 26),
                 const SizedBox(height: 6),
                 Text(options[i].label,
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                         fontSize: 11.5, color: ZenColors.textGreen)),
               ],
             ),
@@ -527,8 +528,7 @@ class FeelingSelector extends StatelessWidget {
               ),
             ),
             child: Text(f,
-                style:
-                    const TextStyle(fontSize: 13.5, color: Colors.black87)),
+                    style: GoogleFonts.poppins(fontSize: 13.5, color: Colors.black87)),
           ),
         );
       }).toList(),

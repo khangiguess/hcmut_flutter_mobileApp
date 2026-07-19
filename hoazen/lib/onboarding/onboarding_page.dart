@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:flutter/gestures.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+
 
 class OnboardingSlide {
   final Color background;
@@ -16,6 +19,8 @@ class OnboardingSlide {
   });
 }
 
+// Removed stray build method that referenced undefined identifiers.
+
 const _slides = <OnboardingSlide>[
   OnboardingSlide(
     background: Color(0xFFAAC29E),
@@ -24,15 +29,16 @@ const _slides = <OnboardingSlide>[
     body: 'Tap the lotus each day to receive an inspiring quote '
         'and begin your daily check-in.',
   ),
+
   OnboardingSlide(
     background: Color(0xFFEF91A3),
     image: 'assets/Book.png',
-    title: 'Reflect and Journal',
+    title: 'Reflect Journal',
     body: 'Log your mood, write a reflection, and watch your '
         'emotional journey bloom over time.',
   ),
   OnboardingSlide(
-    background: Color(0xFFCDC3FC),
+    background: Color.fromRGBO(205, 195, 252, 1),
     image: 'assets/Breathe.png',
     title: 'Breath',
     body: 'Follow gentle breathing exercises designed to help slow '
@@ -144,13 +150,15 @@ class _Slide extends StatelessWidget {
               // Soft translucent bloom with the icon centered.
               Center(
                 child: Container(
-                  width: 300,
-                  height: 300,
+                  width: 200,
+                  height: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: RadialGradient(
+                    gradient: LinearGradient(
+                      begin:Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                       colors: [
-                        Colors.white.withOpacity(0.28),
+                        Colors.white.withOpacity(0.4),
                         Colors.white.withOpacity(0.0),
                       ],
                       stops: const [0.45, 1.0],
@@ -166,18 +174,19 @@ class _Slide extends StatelessWidget {
 
               Text(
                 data.title,
-                style: const TextStyle(
-                  fontFamily: 'serif', // matches "Still Waters"
+                style: GoogleFonts.lora( 
                   fontSize: 40,
                   fontWeight: FontWeight.w500,
                   height: 1.1,
-                  color: Color(0xFF3A3A3A),
+                  color: const Color(0xFF3A3A3A), // Added const here since TextStyle isn't const anymore
                 ),
               ),
+
+
               const SizedBox(height: 16),
               Text(
                 data.body,
-                style: const TextStyle(
+                style: GoogleFonts.poppins( 
                   fontSize: 17,
                   height: 1.5,
                   color: Color(0xFF4A4A4A),

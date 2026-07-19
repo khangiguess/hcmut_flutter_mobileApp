@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../shared/checkin_common.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class breathPage extends StatefulWidget {
   const breathPage({super.key});
@@ -117,10 +118,9 @@ class _breathPageState extends State<breathPage>
     return Column(
       children: [
         const SizedBox(height: 28),
-        const Text(
-          'Still Waters',
-          style: TextStyle(
-            fontFamily: 'serif', // swap for Playfair Display via google_fonts
+        Text(
+          ' ',
+          style: GoogleFonts.lora(
             fontSize: 38,
             fontWeight: FontWeight.w500,
             color: Color(0xFF1A1A1A),
@@ -148,8 +148,7 @@ class _breathPageState extends State<breathPage>
                   child: Text(
                     _phaseLabel,
                     key: ValueKey(_phaseLabel),
-                    style: const TextStyle(
-                      fontFamily: 'serif',
+                    style: GoogleFonts.poppins(
                       fontSize: 20,
                       color: Color(0xFF4F5B47),
                     ),
@@ -160,10 +159,9 @@ class _breathPageState extends State<breathPage>
                 AnimatedOpacity(
                   opacity: _running ? 1.0 : 0.0,
                   duration: const Duration(milliseconds: 300),
-                  child: const Text(
+                  child: Text(
                     'four counts each',
-                    style: TextStyle(
-                      fontFamily: 'serif',
+                     style: GoogleFonts.poppins(
                       fontSize: 13,
                       color: Color(0xFF9AA394),
                     ),

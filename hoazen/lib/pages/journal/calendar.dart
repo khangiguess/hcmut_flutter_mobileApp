@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../shared/checkin_common.dart';
 import 'journal.dart';
 import '../home/quiz.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class calendarPage extends StatefulWidget {
   const calendarPage({super.key});
@@ -62,7 +64,7 @@ class _calendarPageState extends State<calendarPage> {
         children: [
           Text(
             todayLabel,
-            style: const TextStyle(
+            style: GoogleFonts.poppins(
               fontSize: 14,
               color: ZenColors.textGreen,
               fontWeight: FontWeight.w600,
@@ -83,7 +85,7 @@ class _calendarPageState extends State<calendarPage> {
                 child: Text(
                   '${monthName(_month.month)} ${_month.year}',
                   key: ValueKey('${_month.month}-${_month.year}'),
-                  style: const TextStyle(
+                  style: GoogleFonts.lora(
                       fontSize: 28, fontWeight: FontWeight.w800),
                 ),
               ),
@@ -104,7 +106,7 @@ class _calendarPageState extends State<calendarPage> {
                   child: Center(
                     child: Text(
                       weekdayShortName(day),
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: ZenColors.textGreen.withValues(alpha: 0.78),
@@ -227,7 +229,7 @@ class MonthCalendarGrid extends StatelessWidget {
                         )
                       : null,
                   child: Text('$day',
-                      style: const TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 13, fontWeight: FontWeight.w600)),
                 ),
               ],

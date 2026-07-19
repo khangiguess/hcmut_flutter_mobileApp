@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import '../../shared/checkin_common.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 // Detail view for a single day; embedded by calendarPage so the bottom nav stays visible.
 class journalPage extends StatefulWidget {
@@ -40,19 +42,24 @@ class _journalPageState extends State<journalPage> {
                     size: 32, color: ZenColors.textGreen),
               ),
             ),
-            const Text('Daily Check In',
-                style: TextStyle(fontFamily: kSerifFont, fontSize: 36)),
+            Text(
+              'Daily Check In',
+              style: GoogleFonts.lora(
+                fontSize: 36,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             const SizedBox(height: 28),
             // Answers of the 4 check-in questions, editable in place and saved on every change.
             const QuestionTitle('How are you today?'),
-            const SizedBox(height: 14),
+            const SizedBox(height: 20),
             MoodSelector(
               selected: entry.mood,
               onChanged: (v) => _updateEntry(entry, () => entry.mood = v),
             ),
             const SizedBox(height: 34),
             const QuestionTitle('How is your energy today?'),
-            const SizedBox(height: 14),
+            const SizedBox(height: 20),
             EnergySelector(
               selected: entry.energy,
               onChanged: (v) => _updateEntry(entry, () => entry.energy = v),
@@ -60,9 +67,9 @@ class _journalPageState extends State<journalPage> {
             const SizedBox(height: 34),
             const QuestionTitle('What is on your heart?'),
             const SizedBox(height: 4),
-            const Text('Choose all that applies',
-                style: TextStyle(color: ZenColors.textGreen, fontSize: 13)),
-            const SizedBox(height: 14),
+            Text('Choose all that applies',
+                style: GoogleFonts.poppins(color: ZenColors.textGreen, fontSize: 13)),
+            const SizedBox(height: 20),
             FeelingSelector(
               selected: entry.feelings,
               onToggle: (f) => _updateEntry(entry, () {
@@ -73,7 +80,7 @@ class _journalPageState extends State<journalPage> {
             ),
             const SizedBox(height: 34),
             const QuestionTitle('What do you need most today?'),
-            const SizedBox(height: 14),
+            const SizedBox(height: 20),
             NeedSelector(
               selected: entry.need,
               onChanged: (v) => _updateEntry(entry, () => entry.need = v),
@@ -92,7 +99,7 @@ class _journalPageState extends State<journalPage> {
               ),
               child: Text(
                 hasNote ? entry.note : '',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 15,
                   height: 1.5,
                   color: Colors.black.withValues(alpha: 0.55),
@@ -167,11 +174,10 @@ class _NoteDialogState extends State<NoteDialog> {
                       size: 26, color: ZenColors.textGreen),
                 ),
                 const SizedBox(width: 4),
-                const Text(
+                Text(
                   'Write a note for today',
-                  style: TextStyle(
-                    fontFamily: kSerifFont,
-                    fontSize: 22,
+                  style: GoogleFonts.lora(
+                    fontSize: 18,
                     color: ZenColors.textGreen,
                   ),
                 ),

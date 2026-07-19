@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'pages/home/flower.dart';
 import 'pages/journal/calendar.dart';
@@ -95,21 +96,22 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
               ),
 
                 Positioned(
-                  top: 48,
+                  top: 38,
                   left: 20,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(0),
-                    child: Image.asset(
-                      'assets/hoazen.png',
-                      width: 55,
-                      height: 55,
-                      fit: BoxFit.contain,
+                    child: SizedBox(
+                      height: kToolbarHeight * 0.7,
+                      child: Image.asset(
+                        'assets/hoazen.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),
 
                 Positioned(
-                  top: 48,
+                  top: 38,
                   right: 16,
                   child: GestureDetector(
                     onTap: _logout,
@@ -129,14 +131,38 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                   left: 20,   // Side margins
                   child: Text(
                     'Hello, ${_resolveFirstName(FirebaseAuth.instance.currentUser)}',
-                    style: const TextStyle(
+                    style: GoogleFonts.lora(
                       color: Color.fromARGB(255, 255, 255, 255),
                       fontSize: 28,
-                      fontFamily: 'Serif',
                     ),
                   ),
                 ),
               
+                 if (_selectedIndex == 1)
+                Positioned(
+                  bottom: 20, // Lowers the text closer to the white body card
+                  left: 20,   // Side margins
+                  child: Text(
+                    'Reflect Journal',
+                    style: GoogleFonts.lora(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 28,
+                    ),
+                  ),
+                ),
+
+                   if (_selectedIndex == 2)
+                Positioned(
+                  bottom: 20, // Lowers the text closer to the white body card
+                  left: 20,   // Side margins
+                  child: Text(
+                    'Still Waters',
+                    style: GoogleFonts.lora(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 28,
+                    ),
+                  ),
+                ),
               // 3. --- SCATTERED BUBBLES/DOTS MAP ---
               
               // Top Left small dot
