@@ -1,7 +1,6 @@
 // Calendar page: monthly mood calendar; tapping a checked-in day opens its journal detail inline with a fade/slide transition.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../shared/checkin_common.dart';
 import 'journal.dart';
 import '../home/quiz.dart';
@@ -204,7 +203,7 @@ class MonthCalendarGrid extends StatelessWidget {
                       ),
                     ),
                     child: entry != null
-                        ? SvgPicture.asset(kMoods[entry.mood].asset,
+                        ? Image.asset(kMoods[entry.mood].asset,
                             width: 34, height: 34)
                         : Container(
                             width: 34,
