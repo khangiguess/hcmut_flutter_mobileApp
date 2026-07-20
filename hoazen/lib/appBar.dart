@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 import 'package:hoazen/sign_in_up/sign_up.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
