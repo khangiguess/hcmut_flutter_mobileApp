@@ -57,7 +57,7 @@ Future<Map<String, String>> fetchQuoteOfTheDay() async {
       headers: {
         'X-Api-Key': apiKey,
       },
-    ).timeout(const Duration(seconds: 2)); // 👈 UPDATE THIS LINE TO 2 SECONDS
+    ).timeout(const Duration(seconds: 4)); // 👈 UPDATE THIS LINE TO 2 SECONDS
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
