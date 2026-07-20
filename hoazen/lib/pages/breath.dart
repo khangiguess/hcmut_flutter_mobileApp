@@ -119,7 +119,7 @@ class _breathPageState extends State<breathPage>
       children: [
         Positioned(
           left: -40,
-          top: MediaQuery.of(context).size.height * 0.27,
+          top: MediaQuery.of(context).size.height * 0.48,
           child: Opacity(
             opacity: 0.3,
             child: Image.asset(
@@ -132,7 +132,7 @@ class _breathPageState extends State<breathPage>
         ),
         Positioned(
           right: -40,
-          top: MediaQuery.of(context).size.height * 0.27,
+          top: MediaQuery.of(context).size.height * 0.48,
           child: Opacity(
             opacity: 0.3,
             child: Image.asset(
