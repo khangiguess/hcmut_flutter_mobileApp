@@ -115,66 +115,89 @@ class _breathPageState extends State<breathPage>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
       children: [
-        const SizedBox(height: 28),
-        Text(
-          ' ',
-          style: GoogleFonts.lora(
-            fontSize: 38,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF1A1A1A),
-          ),
-        ),
-
-        // Animated ring cluster + lotus.
-        Expanded(
-          child: Center(
-            child: AnimatedBuilder(
-              animation: Listenable.merge([_controller, _release]),
-              builder: (context, _) => _RippleCluster(scale: _displayScale),
+        Positioned(
+          left: -40,
+          top: MediaQuery.of(context).size.height * 0.27,
+          child: Opacity(
+            opacity: 0.3,
+            child: Image.asset(
+              'assets/lotuspond1.png',
+              height: 300,
+              width: 200,
+              fit: BoxFit.contain,
             ),
           ),
         ),
-
-        // Phase label + subtitle (below the circle).
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            return Column(
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 400),
-                  child: Text(
-                    _phaseLabel,
-                    key: ValueKey(_phaseLabel),
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      color: Color(0xFF4F5B47),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 4),
-                // "four counts each" only while a session is running.
-                AnimatedOpacity(
-                  opacity: _running ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 300),
-                  child: Text(
-                    'four counts each',
-                     style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      color: Color(0xFF9AA394),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+        Positioned(
+          right: -40,
+          top: MediaQuery.of(context).size.height * 0.27,
+          child: Opacity(
+            opacity: 0.3,
+            child: Image.asset(
+              'assets/lotuspond2.png',
+              height: 300,
+              width: 200,
+              fit: BoxFit.contain,
+            ),
+          ),
         ),
+        Column(
+          children: [
+            const SizedBox(height: 28),
+          
 
-        const SizedBox(height: 20),
-        _BeginButton(running: _running, onTap: _toggle),
-        const SizedBox(height: 36),
+            // Animated ring cluster + lotus.
+            Expanded(
+              child: Center(
+                child: AnimatedBuilder(
+                  animation: Listenable.merge([_controller, _release]),
+                  builder: (context, _) => _RippleCluster(scale: _displayScale),
+                ),
+              ),
+            ),
+
+            // Phase label + subtitle (below the circle).
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, _) {
+                return Column(
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      child: Text(
+                        _phaseLabel,
+                        key: ValueKey(_phaseLabel),
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          color: Color(0xFF4F5B47),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // "four counts each" only while a session is running.
+                    AnimatedOpacity(
+                      opacity: _running ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 300),
+                      child: Text(
+                        'four counts each',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Color(0xFF9AA394),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+
+            const SizedBox(height: 20),
+            _BeginButton(running: _running, onTap: _toggle),
+            const SizedBox(height: 36),
+          ],
+        ),
       ],
     );
   }
