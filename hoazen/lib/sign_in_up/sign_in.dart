@@ -53,7 +53,6 @@ class _SignInScreenState extends State<SignInScreen> {
         password: _passwordController.text.trim(),
       );
 
-      // Notifies the parent (auth gate) to switch to the home screen.
       widget.onSignInSuccess?.call();
       
     } catch (e) {

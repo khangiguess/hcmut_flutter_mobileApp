@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'firebase_options.dart';
-import 'package:hoazen/sign_in_up/sign_up.dart';
-import 'package:hoazen/sign_in_up/sign_in.dart';
-import 'package:hoazen/setting/profile_page.dart';
+
 import 'pages/home/flower.dart';
 import 'pages/journal/calendar.dart';
 import 'pages/breath.dart';
 
 class BottomNavigationBarExample extends StatefulWidget {
-  const BottomNavigationBarExample({
-    super.key,
-    this.onLogoutSuccess,
-  });
+  const BottomNavigationBarExample({super.key, this.onLogoutSuccess});
 
   final VoidCallback? onLogoutSuccess;
 
@@ -81,26 +74,11 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      
+
       appBar: AppBar(
-        toolbarHeight: 140, // Height increased to give spacing for text and dots
+        toolbarHeight:
+            140, // Height increased to give spacing for text and dots
         automaticallyImplyLeading: false, // Prevents accidental back arrows
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 12, right: 12),
-            child: IconButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ProfilePage()),
-              ),
-              icon: const Icon(
-                Icons.account_circle,
-                size: 32,
-                color: Colors.white,
-              ),
-              tooltip: 'Profile',
-            ),
-          ),
-        ],
         flexibleSpace: ClipRect(
           child: Stack(
             children: [
@@ -115,40 +93,41 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 ),
               ),
 
-                Positioned(
-                  top: 38,
-                  left: 20,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(0),
-                    child: SizedBox(
-                      height: kToolbarHeight * 0.7,
-                      child: Image.asset(
-                        'assets/hoazen.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                ),
-
-                Positioned(
-                  top: 38,
-                  right: 16,
-                  child: GestureDetector(
-                    onTap: _logout,
+              Positioned(
+                top: 19,
+                left: 20,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(0),
+                  child: SizedBox(
+                    width: 88,
+                    height: 88,
                     child: Image.asset(
-                      'assets/OpenPane.png',
-                      width: 44,
-                      height: 44,
+                      'assets/hoazen.png',
                       fit: BoxFit.contain,
                     ),
                   ),
                 ),
-              
+              ),
+
+              Positioned(
+                top: 38,
+                right: 16,
+                child: GestureDetector(
+                  onTap: _logout,
+                  child: Image.asset(
+                    'assets/OpenPane.png',
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+
               // 2. Greeting Text (shown only on Home tab)
               if (_selectedIndex == 0)
                 Positioned(
                   bottom: 20, // Lowers the text closer to the white body card
-                  left: 20,   // Side margins
+                  left: 20, // Side margins
                   child: Text(
                     'Hello, ${_resolveFirstName(FirebaseAuth.instance.currentUser)}',
                     style: GoogleFonts.lora(
@@ -157,13 +136,13 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                     ),
                   ),
                 ),
-              
-                 if (_selectedIndex == 1)
+
+              if (_selectedIndex == 1)
                 Positioned(
                   bottom: 20, // Lowers the text closer to the white body card
-                  left: 20,   // Side margins
+                  left: 20, // Side margins
                   child: Text(
-                    'Reflect Journal',
+                    'Journal',
                     style: GoogleFonts.lora(
                       color: Color.fromARGB(255, 255, 255, 255),
                       fontSize: 28,
@@ -171,10 +150,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                   ),
                 ),
 
-                   if (_selectedIndex == 2)
+              if (_selectedIndex == 2)
                 Positioned(
                   bottom: 20, // Lowers the text closer to the white body card
-                  left: 20,   // Side margins
+                  left: 20, // Side margins
                   child: Text(
                     'Still Waters',
                     style: GoogleFonts.lora(
@@ -184,7 +163,7 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                   ),
                 ),
               // 3. --- SCATTERED BUBBLES/DOTS MAP ---
-              
+
               // Top Left small dot
               Positioned(
                 top: 25,
@@ -192,10 +171,13 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
-              
+
               // Top Center medium dot
               Positioned(
                 top: 15,
@@ -203,7 +185,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 10,
                   height: 10,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
 
@@ -213,7 +198,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 14,
                   height: 14,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
 
@@ -223,7 +211,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 10,
                   height: 10,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
 
@@ -234,7 +225,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 5,
                   height: 5,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
 
@@ -245,7 +239,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 6,
                   height: 6,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
 
@@ -256,7 +253,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
 
@@ -267,7 +267,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
 
@@ -278,7 +281,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
                 child: Container(
                   width: 13,
                   height: 13,
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF2B2).withOpacity(0.15)),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFFFFF2B2).withOpacity(0.15),
+                  ),
                 ),
               ),
             ],
@@ -289,11 +295,10 @@ class _BottomNavigationBarExampleState extends State<BottomNavigationBarExample>
       // Keeps every tab's state alive (IndexedStack) while fading gently between tabs.
       body: FadeTransition(
         opacity: CurvedAnimation(
-            parent: _tabFadeController, curve: Curves.easeOutCubic),
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: _pages,
+          parent: _tabFadeController,
+          curve: Curves.easeOutCubic,
         ),
+        child: IndexedStack(index: _selectedIndex, children: _pages),
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
