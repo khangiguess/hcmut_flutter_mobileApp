@@ -47,22 +47,6 @@
       };
     }
 
-<<<<<<< HEAD
-    const String _apiBaseUrl = 'https://api.api-ninjas.com/v2/quoteoftheday';
-    const String apiKey = '9iemY8EQLBceU4osNv0pMItAFdnT79gPE0l301L1';
-    Future<Map<String, String>> fetchQuoteOfTheDay() async {
-      try { 
-        final uri = Uri.parse(_apiBaseUrl);
-        final response = await http.get(
-          uri,
-          headers: {
-            'X-Api-Key': apiKey,
-          },
-        ).timeout(const Duration(seconds: 2)); // 👈 UPDATE THIS LINE TO 2 SECONDS
-
-        if (response.statusCode == 200) {
-          final List<dynamic> data = jsonDecode(response.body);
-=======
 const String _apiBaseUrl = 'https://api.api-ninjas.com/v2/quoteoftheday';
 const String apiKey = '9iemY8EQLBceU4osNv0pMItAFdnT79gPE0l301L1';
 Future<Map<String, String>> fetchQuoteOfTheDay() async {
@@ -76,7 +60,6 @@ Future<Map<String, String>> fetchQuoteOfTheDay() async {
     ).timeout(const Duration(seconds: 4)); 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
->>>>>>> 48bc264aeba060bc345600ad2f48c49d7249a14c
 
           if (data.isNotEmpty) {
             return {
