@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -32,13 +31,13 @@ class MoodOption {
   const MoodOption(this.label, this.asset);
 }
 
-// The 5 mood levels shown as SVG faces.
+// The 5 mood levels shown as PNG faces (perfect-circle versions).
 const List<MoodOption> kMoods = [
-  MoodOption('Terrible', 'assets/Terrible.svg'),
-  MoodOption('Sad', 'assets/sad.svg'),
-  MoodOption('Normal', 'assets/Normal.svg'),
-  MoodOption('Happy', 'assets/Happy.svg'),
-  MoodOption('Joyful', 'assets/Joyful.svg'),
+  MoodOption('Terrible', 'assets/1red.png'),
+  MoodOption('Sad', 'assets/2grey.png'),
+  MoodOption('Normal', 'assets/3purple.png'),
+  MoodOption('Happy', 'assets/4green.png'),
+  MoodOption('Joyful', 'assets/5yellow.png'),
 ];
 
 // Energy level options (PNG icons because the Figma SVGs embed raster images).
@@ -400,7 +399,7 @@ class MoodSelector extends StatelessWidget {
                   width: 2,
                 ),
               ),
-              child: SvgPicture.asset(kMoods[i].asset, width: 50, height: 50),
+              child: Image.asset(kMoods[i].asset, width: 50, height: 50),
             ),
           ),
         );
