@@ -51,7 +51,7 @@ class _journalPageState extends State<journalPage> {
             ),
             const SizedBox(height: 28),
             // Answers of the 4 check-in questions, editable in place and saved on every change.
-            const QuestionTitle('How are you today?'),
+            const QuestionTitle('What are you feeling today?'),
             const SizedBox(height: 20),
             MoodSelector(
               selected: entry.mood,
@@ -86,23 +86,27 @@ class _journalPageState extends State<journalPage> {
               onChanged: (v) => _updateEntry(entry, () => entry.need = v),
             ),
             const SizedBox(height: 40),
-            // Note card of the day with an add/edit button.
+            // Note card of the day; tapping it opens the note editor popup directly.
             const QuestionTitle('Write a note for today'),
             const SizedBox(height: 16),
-            Container(
-              width: double.infinity,
-              constraints: const BoxConstraints(minHeight: 130),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: ZenColors.mintCard,
-                borderRadius: BorderRadius.circular(32),
-              ),
-              child: Text(
-                hasNote ? entry.note : '',
-                style: GoogleFonts.poppins(
-                  fontSize: 15,
-                  height: 1.5,
-                  color: Colors.black.withValues(alpha: 0.55),
+            TapScale(
+              onTap: () => _openNoteDialog(entry),
+              pressedScale: 0.97,
+              child: Container(
+                width: double.infinity,
+                constraints: const BoxConstraints(minHeight: 130),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: ZenColors.mintCard,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Text(
+                  hasNote ? entry.note : 'Tap to write something…',
+                  style: GoogleFonts.poppins(
+                    fontSize: 15,
+                    height: 1.5,
+                    color: Colors.black.withValues(alpha: hasNote ? 0.55 : 0.35),
+                  ),
                 ),
               ),
             ),
@@ -123,11 +127,26 @@ class _journalPageState extends State<journalPage> {
     CheckInStore.instance.save(entry);
   }
 
-  // Opens the note dialog and persists the result to Firestore.
+  // Opens the note dialog with a scale/fade popup effect and persists the result to Firestore.
   Future<void> _openNoteDialog(CheckInEntry entry) async {
-    final newNote = await showDialog<String>(
+    final newNote = await showGeneralDialog<String>(
       context: context,
-      builder: (_) => NoteDialog(initialText: entry.note),
+      barrierDismissible: true,
+      barrierLabel: 'Note',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 280),
+      pageBuilder: (_, __, ___) => NoteDialog(initialText: entry.note),
+      transitionBuilder: (_, animation, __, child) {
+        final curved =
+            CurvedAnimation(parent: animation, curve: Curves.easeOutBack);
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.85, end: 1.0).animate(curved),
+            child: child,
+          ),
+        );
+      },
     );
     if (newNote != null) {
       entry.note = newNote;
