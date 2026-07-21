@@ -133,7 +133,7 @@ class _journalPageState extends State<journalPage> {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Note',
-      barrierColor: Colors.black54,
+      barrierColor: const Color.fromRGBO(163, 188, 147, 1),
       transitionDuration: const Duration(milliseconds: 280),
       pageBuilder: (_, __, ___) => NoteDialog(initialText: entry.note),
       transitionBuilder: (_, animation, __, child) {
