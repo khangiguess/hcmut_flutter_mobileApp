@@ -377,7 +377,10 @@ class MoodSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    // FittedBox scales the whole row down on narrow screens so it never overflows.
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(kMoods.length, (i) {
         final isSelected = selected == i;
@@ -385,12 +388,12 @@ class MoodSelector extends StatelessWidget {
           onTap: onChanged == null ? null : () => onChanged!(i),
           pressedScale: 0.85,
           child: AnimatedScale(
-            scale: isSelected ? 1.12 : 1.0,
+            scale: isSelected ? 1.1 : 1.0,
             duration: const Duration(milliseconds: 220),
             curve: Curves.easeOutBack,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.symmetric(horizontal: 5),
+              margin: const EdgeInsets.symmetric(horizontal: 4),
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -399,11 +402,12 @@ class MoodSelector extends StatelessWidget {
                   width: 2,
                 ),
               ),
-              child: Image.asset(kMoods[i].asset, width: 50, height: 50),
+              child: Image.asset(kMoods[i].asset, width: 40, height: 40),
             ),
           ),
         );
       }),
+      ),
     );
   }
 }
@@ -421,7 +425,10 @@ class SquareOptionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    // FittedBox scales the whole row down on narrow screens so it never overflows.
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(options.length, (i) {
         final isSelected = selected == i;
@@ -431,9 +438,9 @@ class SquareOptionRow extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 220),
             curve: Curves.easeOut,
-            width: 80,
-            height: 84,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: 70,
+            height: 78,
+            margin: const EdgeInsets.symmetric(horizontal: 3),
             transform: Matrix4.translationValues(0, isSelected ? -4 : 0, 0),
             decoration: BoxDecoration(
               color: ZenColors.mintCard,
@@ -457,16 +464,17 @@ class SquareOptionRow extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(options[i].asset, width: 26, height: 26),
-                const SizedBox(height: 6),
+                Image.asset(options[i].asset, width: 22, height: 22),
+                const SizedBox(height: 5),
                 Text(options[i].label,
                     style: GoogleFonts.poppins(
-                        fontSize: 11.5, color: ZenColors.textGreen)),
+                        fontSize: 10, color: ZenColors.textGreen)),
               ],
             ),
           ),
         );
       }),
+      ),
     );
   }
 }
