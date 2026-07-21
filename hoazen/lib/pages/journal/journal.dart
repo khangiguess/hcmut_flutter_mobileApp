@@ -51,7 +51,7 @@ class _journalPageState extends State<journalPage> {
             ),
             const SizedBox(height: 28),
             // Answers of the 4 check-in questions, editable in place and saved on every change.
-            const QuestionTitle('What are you feeling today?'),
+            const QuestionTitle('How are you feeling today?'),
             const SizedBox(height: 20),
             MoodSelector(
               selected: entry.mood,

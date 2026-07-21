@@ -121,7 +121,7 @@ class _CheckInFlowScreenState extends State<CheckInFlowScreen> {
   // Builds the question widget for a given step.
   Widget _question(int step) => switch (step) {
         0 => Column(children: [
-            const QuestionTitle('What are you feeling today?'),
+            const QuestionTitle('How are you feeling today?'),
             const SizedBox(height: 25),
             MoodSelector(
               selected: _mood,
