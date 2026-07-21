@@ -127,6 +127,7 @@ class _journalPageState extends State<journalPage> {
   Future<void> _openNoteDialog(CheckInEntry entry) async {
     final newNote = await showDialog<String>(
       context: context,
+      barrierColor: const Color.fromRGBO(163, 188, 147, 1),
       builder: (_) => NoteDialog(initialText: entry.note),
     );
     if (newNote != null) {
