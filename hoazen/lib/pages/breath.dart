@@ -119,12 +119,12 @@ class _breathPageState extends State<breathPage>
       children: [
         Positioned(
           left: -40,
-          top: MediaQuery.of(context).size.height * 0.27,
+          top: MediaQuery.of(context).size.height * 0.38,
           child: Opacity(
             opacity: 0.3,
             child: Image.asset(
               'assets/lotuspond1.png',
-              height: 300,
+              height: 500,
               width: 200,
               fit: BoxFit.contain,
             ),
@@ -132,12 +132,12 @@ class _breathPageState extends State<breathPage>
         ),
         Positioned(
           right: -40,
-          top: MediaQuery.of(context).size.height * 0.27,
+          top: MediaQuery.of(context).size.height * 0.38,
           child: Opacity(
             opacity: 0.3,
             child: Image.asset(
               'assets/lotuspond2.png',
-              height: 300,
+              height: 500,
               width: 200,
               fit: BoxFit.contain,
             ),

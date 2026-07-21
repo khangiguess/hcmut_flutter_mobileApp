@@ -250,6 +250,7 @@ class _FlowerPageState extends State<FlowerPage> with AutomaticKeepAliveClientMi
               borderRadius: BorderRadius.circular(30),
             ),
             child: AnimatedCrossFade(
+              alignment: Alignment.center,
               crossFadeState: !_savedGlobalShowQuote 
                   ? CrossFadeState.showFirst 
                   : CrossFadeState.showSecond,
@@ -283,7 +284,9 @@ class _FlowerPageState extends State<FlowerPage> with AutomaticKeepAliveClientMi
                   final String quoteText = snapshot.data?['quote'] ?? '';
                   final String authorText = snapshot.data?['author'] ?? '';
 
-                  return Column(
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
@@ -307,6 +310,7 @@ class _FlowerPageState extends State<FlowerPage> with AutomaticKeepAliveClientMi
                         ),
                       ],
                     ],
+                    ),
                   );
                 },
               ),
