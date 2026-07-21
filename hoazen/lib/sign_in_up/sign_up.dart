@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hoazen/appBar.dart';
 import 'package:hoazen/sign_in_up/sign_in.dart';
 import 'package:hoazen/sign_in_up/auth_service.dart';
 
 // Global constants for the sign-up screen.
-const iconImage = 'assets/hoazen.png';
-const newIcon = 'assets/hoazenIcon.png';
+const iconImage = 'assets/hoazenIcon.png';
 const _primaryColor = Color(0xFF42624B);
 const _secondaryColor = Color(0xFFAAC29E);
 const _borderColor = Color(0xFFEF91A3);
@@ -54,14 +51,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         name: _nameController.text.trim(),
       );
 
-      if (FirebaseAuth.instance.currentUser != null) {
-        if (!mounted) return;
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const BottomNavigationBarExample()),
-          (route) => false,
-        );
+      // Notifies the parent (auth gate) to switch to the home screen.
+      if (widget.onSignUpSuccess != null) {
+        widget.onSignUpSuccess!();
+        return;
       }
+
+      // Return to the root route; AppEntryGate will route to onboarding/home.
+      if (!mounted) {
+        return;
+      }
+
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
@@ -120,6 +121,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           },
                         ),
                       ),
+
+
 
 
                       Text(

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 
 class AuthService{
 
@@ -22,25 +21,17 @@ class AuthService{
         await userCredential.user?.updateDisplayName(name);
       }
 
-      // THIS IS THE LINK: We grab the 'uid' from the newly created Auth user
-      String uid = userCredential.user!.uid;
-
-      // Create a document in the 'users' collection using that exact UID.
-      // If Firestore rules block this write, we still want the auth account
-      // to be created so the app can redirect to the home screen.
-      try {
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'name': name,
-          'email': email,
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      } on FirebaseException catch (e) {
-        if (e.code == 'permission-denied' ||
-            e.code == 'unavailable' ||
-            e.code == 'failed-precondition') {
-          debugPrint('User profile write skipped due to Firestore issue: ${e.code} - ${e.message}');
-        } else {
-          rethrow;
+      // Save the profile document (best-effort: never blocks a successful sign-up).
+      final uid = userCredential.user?.uid;
+      if (uid != null) {
+        try {
+          await FirebaseFirestore.instance.collection('users').doc(uid).set({
+            'name': name,
+            'email': email,
+            'createdAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        } catch (_) {
+          // Ignore profile write failures; authentication already succeeded.
         }
       }
 
@@ -56,7 +47,6 @@ class AuthService{
             message = 'An error occurred. Please try again.';
         }
         
-        // Throw our custom exception instead of the default Exception
         throw CustomAuthException(message); 
     } catch (e) {
       throw CustomAuthException('An unexpected error occurred.');
@@ -94,18 +84,15 @@ class AuthService{
       }
     } on FirebaseAuthException catch (e) {
       String message = '';
-      
-      // Checking for the specific Firebase error codes
       if (e.code == 'invalid-email') {
-        message = 'Please enter a valid email';
+        message = 'Please enter a valid email address';
       } else if (e.code == 'user-not-found' || e.code == 'wrong-password' || e.code == 'invalid-credential') {
-        // Grouping these together because of Firebase's new security rules
         message = 'Invalid email or password.';
       } else {
         message = 'An error occurred. Please try again.';
       }
 
-      // Throw our custom exception instead of the default Exception
+      // Throw the error back to the screen instead of showing a toast
       throw CustomAuthException(message); 
     } catch (e) {
       throw CustomAuthException('An unexpected error occurred.');
@@ -113,13 +100,12 @@ class AuthService{
   }
 }
 
-// Add this little class to the very bottom of your file!
+
 class CustomAuthException implements Exception {
   final String message;
   
   CustomAuthException(this.message);
   
-  // This is the magic trick: it tells Dart to only output your custom message text!
   @override
   String toString() {
     return message;
