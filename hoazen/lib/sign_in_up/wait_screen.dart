@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WaitScreen extends StatelessWidget {
   const WaitScreen({super.key});
@@ -64,7 +65,7 @@ class WaitScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     Text(
                       'HoaZen',
-                      style: textTheme.displaySmall?.copyWith(
+                     style: GoogleFonts.lora(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -1.0,

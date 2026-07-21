@@ -241,34 +241,35 @@ Future<Map<String, String>> fetchQuoteOfTheDay() async {
               
               const SizedBox(height: 24),
 
-              // 2. Welcome to HoaZen Box (Prompt vanishes instantly, box & quote transition smoothly)
-              Container(
+          // 2. Welcome to HoaZen Box (Prompt vanishes instantly, box & quote transition smoothly)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20), 
+            decoration: BoxDecoration(
+              color: ZenColors.headerGreen,
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: AnimatedCrossFade(
+              alignment: Alignment.center,
+              crossFadeState: !_savedGlobalShowQuote 
+                  ? CrossFadeState.showFirst 
+                  : CrossFadeState.showSecond,
+              duration: const Duration(milliseconds: 1800), // Smooth 1.8-second transition
+              
+              // --- FIRST STATE: The Prompt ---
+              firstChild: SizedBox(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20), 
-                decoration: BoxDecoration(
-                  color: ZenColors.headerGreen,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: AnimatedCrossFade(
-                  crossFadeState: !_savedGlobalShowQuote 
-                      ? CrossFadeState.showFirst 
-                      : CrossFadeState.showSecond,
-                  duration: const Duration(milliseconds: 1800), // Smooth 1.8-second transition
-                  
-                  // --- FIRST STATE: The Prompt ---
-                  firstChild: SizedBox(
-                    width: double.infinity,
-                    child: !_savedGlobalShowQuote
-                        ? Text(
-                            'Tap on the flower to bloom and reveal your daily quote!',
-                            style: GoogleFonts.poppins(
-                              color: Colors.white,
-                              fontSize: 16,
-                            ),
-                            textAlign: TextAlign.center,
-                          )
-                        : const SizedBox.shrink(),
-                  ),
+                child: !_savedGlobalShowQuote
+                    ? Text(
+                        'Tap on the flower to bloom and reveal your daily quote!',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      )
+                    : const SizedBox.shrink(),
+              ),
 
                   // --- SECOND STATE: The Quote ---
                   secondChild: FutureBuilder<Map<String, String>>(
@@ -283,35 +284,38 @@ Future<Map<String, String>> fetchQuoteOfTheDay() async {
                       final String quoteText = snapshot.data?['quote'] ?? '';
                       final String authorText = snapshot.data?['author'] ?? '';
 
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '"$quoteText"',
-                            style: GoogleFonts.poppins(
-                              color: Colors.white, 
-                              fontSize: 16,
-                            ),
-                            textAlign: TextAlign.center,
+                  return SizedBox(
+                    width: double.infinity,
+                    child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '"$quoteText"',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white, 
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      if (authorText.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          '- $authorText',
+                          style: GoogleFonts.lora(
+                            color: Color(0xFFFFF2B2), 
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
                           ),
-                          if (authorText.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            Text(
-                              '- $authorText',
-                              style: GoogleFonts.lora(
-                                color: Color(0xFFFFF2B2), 
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ],
-                      );
-                    },
-                  ),
-                ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ],
+                    ),
+                  );
+                },
               ),
+            ),
+          ),
 
               const SizedBox(height: 24),
               // 3. Daily Check-In Card Flow Element
