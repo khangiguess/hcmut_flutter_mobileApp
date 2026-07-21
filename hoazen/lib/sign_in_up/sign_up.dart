@@ -4,7 +4,7 @@ import 'package:hoazen/sign_in_up/sign_in.dart';
 import 'package:hoazen/sign_in_up/auth_service.dart';
 
 // Global constants for the sign-up screen.
-const iconImage = 'assets/hoazen.png';
+const iconImage = 'assets/hoazenIcon.png';
 const _primaryColor = Color(0xFF42624B);
 const _secondaryColor = Color(0xFFAAC29E);
 const _borderColor = Color(0xFFEF91A3);
@@ -108,21 +108,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(36),
                         child: Image.asset(
-                          iconImage,
+                          newIcon,
                           fit: BoxFit.contain,
-                          height: 120, 
-                          width: 160,
+                          height: 140, 
+                          width: 140,
                           errorBuilder: (context, error, stackTrace) {
                             return const Icon(
                               Icons.eco_outlined,
-                              size: 100,
+                              size: 60,
                               color: _borderColor,
                             );
                           },
                         ),
                       ),
 
-                      const SizedBox(height: 16),
+
+
 
                       Text(
                         'Sign Up',
